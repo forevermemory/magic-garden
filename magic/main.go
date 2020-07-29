@@ -1,16 +1,18 @@
 package main
 
 import (
+	"fmt"
+	"magic/global"
 	"magic/router"
-	mylog "magic/utils/log"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	gin.SetMode(gin.ReleaseMode)
+	gin.SetMode(gin.ReleaseMode)            // 不显示日志
+	global.InitGlobalConn()                 // 初始化连接
+	r := router.InitRouterV1(nil, "api/v1") // 设置路由
 
-	r := router.InitRouter(nil, "api/v1")
-	mylog.Success("Listening and serving HTTP on :8000")
+	fmt.Println("Listening and serving HTTP on :8000")
 	r.Run(":8000")
 }

@@ -1,18 +1,19 @@
 package router
 
 import (
-	"html/template"
+	"magic/controller"
 	"magic/utils/middleware"
 
 	"github.com/gin-gonic/gin"
 	"github.com/rakyll/statik/fs"
 )
 
-// InitRouter 初始化gin路由
-func InitRouter(r *gin.Engine, prefix string) *gin.Engine {
+// InitRouterV1 初始化gin路由
+func InitRouterV1(r *gin.Engine, prefix string) *gin.Engine {
 	if r == nil {
 		r = gin.Default()
 	}
+	// TODO user-agent 判断
 	r.Use(middleware.Cors()) // 跨域
 	// 静态文件  建议前端build之后 交给ngnix管理
 	//r.Static(prefix+"/static", "./static")
@@ -20,21 +21,34 @@ func InitRouter(r *gin.Engine, prefix string) *gin.Engine {
 	// r.StaticFS("/static", http.Dir("./static"))
 	statikFS, _ := fs.New()
 	r.StaticFS("/static", statikFS)
-	r.GET("", func(c *gin.Context) {
-		t := template.Must(template.New("index").Parse(INDEXHTML))
-		t.ExecuteTemplate(c.Writer, "index", "")
-	})
+	// r.GET("", func(c *gin.Context) {
+	// 	t := template.Must(template.New("index").Parse(INDEXHTML))
+	// 	t.ExecuteTemplate(c.Writer, "index", "")
+	// })
 
 	r.GET("/heartbeat", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "ok",
 		})
 	})
+	// 生成验证码图片
+	r.GET("/captcha", controller.GenerateCaptcha)
 
-	// aaa := r.Group(prefix + "/aaa")
-	// {
-	// 	// aaa.GET("/delete", route(controller.DeleteApplicationUpgradeHistory))
-	// }
+	// 用户注册登陆相关
+	user := r.Group(prefix + "/user")
+	{
+		user.GET("/sendsms", route(controller.RegisterUserSendMsg))
+		user.POST("/login", controller.UserLogin)
+		user.POST("/registe", route(controller.AddUsers))
+		user.POST("/update", route(controller.UpdateUsers))
+		user.POST("/reset/password", route(controller.UpdateUsersPassword))
+		user.GET("/user/get", route(controller.GetUsersByID))
+	}
+
+	userGarden := r.Group(prefix+"/userGarden", middleware.JWTAuth())
+	{
+		userGarden.POST("/add", route(controller.RegisterUserSendMsg))
+	}
 
 	return r
 }

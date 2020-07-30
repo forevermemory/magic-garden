@@ -10,8 +10,7 @@ date:2020-07-29 14:00:32
 
 // Users Users
 type Users struct {
-	ID int `json:"id" form:"_id" gorm:"column:_id;primary_key;auto_increment;comment:'主键'"`
-
+	ID             int    `json:"_id" form:"_id" gorm:"column:_id;primary_key;auto_increment;comment:'主键'"`
 	Username       string `json:"username" form:"username" gorm:"column:username;comment:'用户名'"`
 	Nickname       string `json:"nickname" form:"nickname" gorm:"column:nickname;comment:'昵称'"`
 	Password       string `json:"password" form:"password" gorm:"column:password;comment:'密码'"`

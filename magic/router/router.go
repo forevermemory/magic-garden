@@ -45,9 +45,17 @@ func InitRouterV1(r *gin.Engine, prefix string) *gin.Engine {
 		user.GET("/user/get", route(controller.GetUsersByID))
 	}
 
-	userGarden := r.Group(prefix+"/userGarden", middleware.JWTAuth())
+	userGame := r.Group(prefix + "/usergame")
 	{
-		userGarden.POST("/add", route(controller.RegisterUserSendMsg))
+		userGame.POST("/add", route(controller.UserAddGames))
+		userGame.POST("/delete", route(controller.UserDeleteGames))
+	}
+	garden := r.Group(prefix + "/garden")
+	{
+		garden.GET("/init", route(controller.InitGarden))
+
+		// TODO
+		garden.POST("/signin", route(controller.UserAddGames))
 	}
 
 	return r

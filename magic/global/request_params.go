@@ -12,3 +12,9 @@ type RegisteruserParams struct {
 	Captcha   string `json:"captcha"`
 	IsCaptcha int    `json:"is_captcha"`
 }
+
+// UserAddGamesParams 用户添加游戏传入的参数
+type UserAddGamesParams struct {
+	UserID int `json:"user_id"`
+	GameID int `json:"game_id"`
+}

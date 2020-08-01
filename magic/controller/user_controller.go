@@ -51,6 +51,19 @@ func RegisterUserSendMsg(c *gin.Context) interface{} {
 	return OKResponse{0, res}
 }
 
+// IsUsernameExist IsUsernameExist
+func IsUsernameExist(c *gin.Context) interface{} {
+	username, ok := c.GetQuery("username")
+	if !ok {
+		return ErrorResponse{-1, "请传入username"}
+	}
+	data, err := service.IsUsernameExist(username)
+	if err != nil {
+		return ErrorResponse{-1, err.Error()}
+	}
+	return OKResponse{0, data}
+}
+
 // AddUsers add
 func AddUsers(c *gin.Context) interface{} {
 
@@ -207,6 +220,7 @@ func generateToken(c *gin.Context, user *db.Users) {
 	})
 	// 返回结果
 	result := map[string]interface{}{
+		"_id":      user.ID,
 		"username": user.Username,
 		"phone":    user.Phone,
 		"nickname": user.Nickname,

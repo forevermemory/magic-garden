@@ -53,3 +53,45 @@ func GetGardenByID(c *gin.Context) interface{} {
 	}
 	return OKResponse{0, data}
 }
+
+// ----背包-----
+
+// ListGardenKnapsack  分页查询背包
+func ListGardenKnapsack(c *gin.Context) interface{} {
+	var u = db.GardenFlowerKnapsack{}
+	err := c.ShouldBind(&u)
+	if err != nil {
+		return ErrorResponse{-1, err.Error()}
+	}
+	data, err := service.ListGardenKnapsack(&u)
+	if err != nil {
+		return ErrorResponse{-1, err.Error()}
+	}
+	return OKResponse{0, data}
+}
+
+//-----花园帮助----
+
+// GetGardenHelpByID  get 花园帮助 by id
+func GetGardenHelpByID(c *gin.Context) interface{} {
+	var u = db.GardenHelp{}
+	err := c.ShouldBind(&u)
+	if err != nil {
+		return ErrorResponse{-1, err.Error()}
+	}
+	data, err := service.GetGardenHelpByID(u.ID)
+	if err != nil {
+		return ErrorResponse{-1, err.Error()}
+	}
+	return OKResponse{0, data}
+}
+
+// GetGardenHelpTitles  get 花园帮助 标题列表
+func GetGardenHelpTitles(c *gin.Context) interface{} {
+
+	data, err := service.GetGardenHelpTitles()
+	if err != nil {
+		return ErrorResponse{-1, err.Error()}
+	}
+	return OKResponse{0, data}
+}

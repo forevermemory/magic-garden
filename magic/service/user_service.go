@@ -11,6 +11,7 @@ import (
 	utils "magic/utils"
 
 	"github.com/afocus/captcha"
+	"github.com/jinzhu/gorm"
 
 	"github.com/gomodule/redigo/redis"
 )
@@ -98,6 +99,25 @@ func RegisterUserSendMsg(phone string) (string, error) {
 // AddUsers add
 func AddUsers(b *db.Users) error {
 	return db.AddUsers(b)
+}
+
+// IsUsernameExist 是否用户名存在
+func IsUsernameExist(username string) (interface{}, error) {
+	// 首先判断用户名是否存在
+	res := make(map[string]interface{})
+	_, err := db.GetUserByUsername(username)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			res["msg"] = "用户名不存在"
+			res["is_exits"] = "2"
+			return res, nil
+		}
+		return res, err
+	}
+	// 可以查询到这个username
+	res["msg"] = "用户名存在"
+	res["is_exits"] = "1"
+	return res, nil
 }
 
 // UpdateUsersPassword 重置密码

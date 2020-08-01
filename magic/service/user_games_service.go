@@ -27,7 +27,7 @@ func UserAddGames(req *global.UserAddGamesParams) error {
 		return db.AddUserGames(&db.UserGames{
 			UserID:   user.ID,
 			GameID:   game.ID,
-			IsDelete: 0,
+			IsDelete: 1,
 			AddTime:  utils.GetNowTimeString(),
 		})
 	}
@@ -35,9 +35,6 @@ func UserAddGames(req *global.UserAddGamesParams) error {
 	userGame := userGames[0]
 	userGame.AddTime = utils.GetNowTimeString()
 	if err = db.UpdateUserGames(userGame); err != nil {
-		return err
-	}
-	if err = db.UpdateUserGamesSetIsdeleteEqulaZelo(userGame); err != nil {
 		return err
 	}
 	return nil
@@ -62,7 +59,7 @@ func UserDeleteGames(req *global.UserAddGamesParams) error {
 	}
 	userGame := userGames[0]
 	userGame.DeleteTime = utils.GetNowTimeString()
-	userGame.IsDelete = 1
+	userGame.IsDelete = 2
 
 	return db.UpdateUserGames(userGame)
 }

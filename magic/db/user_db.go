@@ -18,6 +18,8 @@ type Users struct {
 	Status         int    `json:"status" form:"status" gorm:"column:status;comment:'状态'"`
 	IsVip          int    `json:"is_vip" form:"is_vip" gorm:"column:is_vip;comment:'是否是会员'"`
 	Desc           string `json:"desc" form:"desc" gorm:"column:desc;comment:'desc'"`
+	GBMoney        string `json:"gb_money" form:"gb_money" gorm:"column:gb_money;comment:'FGB'"`
+	Yuanbao        string `json:"yuanbao" form:"yuanbao" gorm:"column:yuanbao;comment:'重置的元宝数量'"`
 	ChangePassTime string `json:"change_pass_time" form:"change_pass_time" gorm:"column:change_pass_time;comment:'desc'"`
 	PageNo         int    `json:"-" form:"page" gorm:"-"`
 	PageSize       int    `json:"-" form:"page_size" gorm:" - "`
@@ -45,6 +47,13 @@ func GetUsersByUsernameAndPassword(username string, password string) (*Users, er
 func GetUsersByID(id int) (*Users, error) {
 	o := &Users{}
 	err := global.MYSQL.Table("users").Where("_id = ?", id).First(o).Error
+	return o, err
+}
+
+// GetUserByUsername GetUserByUsername
+func GetUserByUsername(username string) (*Users, error) {
+	o := &Users{}
+	err := global.MYSQL.Table("users").Where("username = ?", username).Limit(1).First(o).Error
 	return o, err
 }
 

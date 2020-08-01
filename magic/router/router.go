@@ -40,6 +40,7 @@ func InitRouterV1(r *gin.Engine, prefix string) *gin.Engine {
 		user.GET("/sendsms", route(controller.RegisterUserSendMsg))
 		user.POST("/login", controller.UserLogin)
 		user.POST("/registe", route(controller.AddUsers))
+		user.GET("/registe/isUsernameExist", route(controller.IsUsernameExist))
 		user.POST("/update", route(controller.UpdateUsers))
 		user.POST("/reset/password", route(controller.UpdateUsersPassword))
 		user.GET("/user/get", route(controller.GetUsersByID))
@@ -52,9 +53,18 @@ func InitRouterV1(r *gin.Engine, prefix string) *gin.Engine {
 	}
 	garden := r.Group(prefix + "/garden")
 	{
+		// 初始化花园
 		garden.GET("/init", route(controller.InitGarden))
+		// 更新花园的公告等信息
+		garden.POST("/update", route(controller.UpdateGarden))
+		// 查看背包
+		garden.GET("/knapsack/list", route(controller.ListGardenKnapsack))
 
-		// TODO
+		// 花园帮助
+		garden.GET("/help/list", route(controller.GetGardenHelpTitles))
+		garden.GET("/help/detail", route(controller.GetGardenHelpByID))
+
+		// TODO 花园签到
 		garden.POST("/signin", route(controller.UserAddGames))
 	}
 

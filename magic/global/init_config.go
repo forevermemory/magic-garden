@@ -57,13 +57,13 @@ func initRedis() {
 			MaxIdle:   16,
 			Wait:      true,
 			Dial: func() (redis.Conn, error) {
-				count := 1
+				count := 0
 				for {
 					count++
 					c, err := redis.Dial("tcp", os.Getenv("redis"))
 					if err != nil {
 						fmt.Println("连接redis错误,10s后尝试下一次连接,当前连接总的次数为:", count)
-						time.Sleep(5)
+						time.Sleep(time.Second * 5)
 					} else {
 						// 登陆
 						// if _, err := c.Do("AUTH", "password"); err != nil {

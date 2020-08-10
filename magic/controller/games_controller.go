@@ -16,13 +16,13 @@ func AddGames(c *gin.Context) interface{} {
 	var u = db.Games{}
 	err := c.ShouldBind(&u)
 	if err != nil {
-		return ErrorResponse{-1, err.Error()}
+		return Response{Code: -1, Msg: err.Error()}
 	}
-	err = service.AddGames(&u)
+	data, err := service.AddGames(&u)
 	if err != nil {
-		return ErrorResponse{-1, err.Error()}
+		return Response{Code: -1, Msg: err.Error()}
 	}
-	return OKResponse{0, "ok"}
+	return Response{Code: 0, Msg: "ok", Data: data}
 }
 
 // UpdateGames update
@@ -30,13 +30,13 @@ func UpdateGames(c *gin.Context) interface{} {
 	var u = db.Games{}
 	err := c.ShouldBind(&u)
 	if err != nil {
-		return ErrorResponse{-1, err.Error()}
+		return Response{Code: -1, Msg: err.Error()}
 	}
-	err = service.UpdateGames(&u)
+	data, err := service.UpdateGames(&u)
 	if err != nil {
-		return ErrorResponse{-1, err.Error()}
+		return Response{Code: -1, Msg: err.Error()}
 	}
-	return OKResponse{0, "ok"}
+	return Response{Code: 0, Msg: "ok", Data: data}
 }
 
 // GetGamesByID  get xxx by id
@@ -44,11 +44,11 @@ func GetGamesByID(c *gin.Context) interface{} {
 	var u = db.Games{}
 	err := c.ShouldBind(&u)
 	if err != nil {
-		return ErrorResponse{-1, err.Error()}
+		return Response{Code: -1, Msg: err.Error()}
 	}
 	data, err := service.GetGamesByID(u.ID)
 	if err != nil {
-		return ErrorResponse{-1, err.Error()}
+		return Response{Code: -1, Msg: err.Error()}
 	}
 	return OKResponse{0, data}
 }
@@ -58,11 +58,11 @@ func ListGames(c *gin.Context) interface{} {
 	var u = db.Games{PageSize: 10, PageNo: 1}
 	err := c.ShouldBind(&u)
 	if err != nil {
-		return ErrorResponse{-1, err.Error()}
+		return Response{Code: -1, Msg: err.Error()}
 	}
 	data, err := service.ListGames(&u)
 	if err != nil {
-		return ErrorResponse{-1, err.Error()}
+		return Response{Code: -1, Msg: err.Error()}
 	}
 	return OKResponse{0, data}
 }
@@ -72,11 +72,11 @@ func DeleteGames(c *gin.Context) interface{} {
 	var u = db.Games{}
 	err := c.ShouldBind(&u)
 	if err != nil {
-		return ErrorResponse{-1, err.Error()}
+		return Response{Code: -1, Msg: err.Error()}
 	}
 	err = service.DeleteGames(u.ID)
 	if err != nil {
-		return ErrorResponse{-1, err.Error()}
+		return Response{Code: -1, Msg: err.Error()}
 	}
-	return OKResponse{0, "ok"}
+	return Response{Code: 0, Msg: "ok"}
 }

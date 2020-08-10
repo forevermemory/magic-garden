@@ -55,17 +55,26 @@ func InitRouterV1(r *gin.Engine, prefix string) *gin.Engine {
 	{
 		// 初始化花园
 		garden.GET("/init", route(controller.InitGarden))
+		// 查询花园详情
+		garden.GET("/list/:oid", route(controller.GetGardenByID))
 		// 更新花园的公告等信息
 		garden.POST("/update", route(controller.UpdateGarden))
 		// 查看背包
 		garden.GET("/knapsack/list", route(controller.ListGardenKnapsack))
-
 		// 花园帮助
 		garden.GET("/help/list", route(controller.GetGardenHelpTitles))
 		garden.GET("/help/detail", route(controller.GetGardenHelpByID))
-
-		// TODO 花园签到
-		garden.POST("/signin", route(controller.UserAddGames))
+		//  花园签到
+		garden.GET("/signin", route(controller.GardenEveryDaySignin))
+		garden.GET("/signin/list", route(controller.ListGardenSigninHistory))
+		// 花盆
+		garden.GET("/flowerpot/list", route(controller.GardeFlowerpotList))
+		garden.GET("/flowerpot/detail", route(controller.GardeFlowerpotDetail))
+		garden.POST("/flowerpot/sow", route(controller.GardeFlowerpotSow))
+		garden.POST("/flowerpot/lookafter", route(controller.GardeFlowerpotLookAfter))
+		garden.POST("/flowerpot/remove", route(controller.GardeFlowerpotRemove))
+		// garden.GET("/flowerpot/purchase", route(controller.GardeFlowerpotPurchase))
+		// 收支统计 TODO
 	}
 
 	return r

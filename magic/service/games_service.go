@@ -7,12 +7,12 @@ date:2020-07-30 20:20:24
 import "magic/db"
 
 // AddGames add
-func AddGames(b *db.Games) error {
+func AddGames(b *db.Games) (*db.Games, error) {
 	return db.AddGames(b)
 }
 
 // UpdateGames update
-func UpdateGames(b *db.Games) error {
+func UpdateGames(b *db.Games) (*db.Games, error) {
 	return db.UpdateGames(b)
 }
 

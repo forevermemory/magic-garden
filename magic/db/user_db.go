@@ -8,6 +8,23 @@ import (
 date:2020-07-29 14:00:32
 */
 
+/*
+CREATE TABLE `users` (
+  `_id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(255) DEFAULT NULL COMMENT '用户名(登录账号)',
+  `nickname` varchar(255) DEFAULT NULL COMMENT '昵称',
+  `password` varchar(255) DEFAULT NULL COMMENT '密码',
+  `status` int(11) DEFAULT NULL COMMENT '状态',
+  `phone` varchar(255) DEFAULT NULL COMMENT '手机号',
+  `is_vip` int(11) DEFAULT '0' COMMENT '是否是vip 1否 2是',
+  `change_pass_time` varchar(255) DEFAULT NULL COMMENT '上次修改密码时间',
+  `desc` varchar(255) DEFAULT NULL COMMENT '备注',
+  `gb_money` varchar(1024) DEFAULT '10000' COMMENT 'GB',
+  `yuanbao` varchar(255) DEFAULT '0' COMMENT '元宝',
+  PRIMARY KEY (`_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COMMENT='用户表'
+*/
+
 // Users Users
 type Users struct {
 	ID             int    `json:"_id" form:"_id" gorm:"column:_id;primary_key;auto_increment;comment:'主键'"`
@@ -70,8 +87,9 @@ func AddUsers(o *Users) error {
 }
 
 // UpdateUsers 修改
-func UpdateUsers(o *Users) error {
-	return global.MYSQL.Table("users").Where("_id=?", o.ID).Update(o).Error
+func UpdateUsers(o *Users) (*Users, error) {
+	err := global.MYSQL.Table("users").Where("_id=?", o.ID).Update(o).Error
+	return o, err
 }
 
 // ListUsers 分页条件查询

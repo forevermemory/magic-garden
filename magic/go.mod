@@ -14,5 +14,6 @@ require (
 	github.com/joho/godotenv v1.3.0
 	github.com/qiniu/api.v7/v7 v7.5.0
 	github.com/rakyll/statik v0.1.7
+	github.com/robfig/cron v1.2.0
 	golang.org/x/image v0.0.0-20200618115811-c13761719519 // indirect
 )

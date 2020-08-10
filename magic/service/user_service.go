@@ -121,21 +121,21 @@ func IsUsernameExist(username string) (interface{}, error) {
 }
 
 // UpdateUsersPassword 重置密码
-func UpdateUsersPassword(req *global.RegisteruserParams) error {
+func UpdateUsersPassword(req *global.RegisteruserParams) (*db.Users, error) {
 	// 1.用户
 	user, err := db.GetUsersByID(req.ID)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	// 2。 code是否正确
 	conn := global.REDIS.Get()
 	defer conn.Close()
 	code, err := redis.String(conn.Do("get", req.Phone))
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if code != req.Code {
-		return errors.New("验证码不正确")
+		return nil, errors.New("验证码不正确")
 	}
 	// 3.更新
 	user.Password = req.NewPassword
@@ -144,7 +144,7 @@ func UpdateUsersPassword(req *global.RegisteruserParams) error {
 }
 
 // UpdateUsers update
-func UpdateUsers(b *db.Users) error {
+func UpdateUsers(b *db.Users) (*db.Users, error) {
 	return db.UpdateUsers(b)
 }
 

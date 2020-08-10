@@ -41,14 +41,14 @@ func UserLogin(c *gin.Context) {
 func RegisterUserSendMsg(c *gin.Context) interface{} {
 	phone, ok := c.GetQuery("phone")
 	if !ok {
-		return ErrorResponse{-1, "请传入手机号phone参数"}
+		return Response{Code: -1, Msg: "请传入手机号phone参数"}
 	}
 	code, err := service.RegisterUserSendMsg(phone)
 	if err != nil {
-		return ErrorResponse{-1, err.Error()}
+		return Response{Code: -1, Msg: err.Error()}
 	}
-	res := Response{"ok", gin.H{"code": code}}
-	return OKResponse{0, res}
+	// res := Response{"ok", gin.H{"code": code}}
+	return OKResponse{0, code}
 }
 
 // IsUsernameExist IsUsernameExist
@@ -59,7 +59,7 @@ func IsUsernameExist(c *gin.Context) interface{} {
 	}
 	data, err := service.IsUsernameExist(username)
 	if err != nil {
-		return ErrorResponse{-1, err.Error()}
+		return Response{Code: -1, Msg: err.Error()}
 	}
 	return OKResponse{0, data}
 }
@@ -70,13 +70,13 @@ func AddUsers(c *gin.Context) interface{} {
 	var u = global.RegisteruserParams{}
 	err := c.ShouldBind(&u)
 	if err != nil {
-		return ErrorResponse{-1, err.Error()}
+		return Response{Code: -1, Msg: err.Error()}
 	}
 	err = service.RegisterUser(&u, c.Request.Header.Get("User-Agent"))
 	if err != nil {
-		return ErrorResponse{-1, err.Error()}
+		return Response{Code: -1, Msg: err.Error()}
 	}
-	return OKResponse{0, "ok"}
+	return Response{Code: 0, Msg: "ok"}
 }
 
 // UpdateUsers update
@@ -84,13 +84,13 @@ func UpdateUsers(c *gin.Context) interface{} {
 	var u = db.Users{}
 	err := c.ShouldBind(&u)
 	if err != nil {
-		return ErrorResponse{-1, err.Error()}
+		return Response{Code: -1, Msg: err.Error()}
 	}
-	err = service.UpdateUsers(&u)
+	data, err := service.UpdateUsers(&u)
 	if err != nil {
-		return ErrorResponse{-1, err.Error()}
+		return Response{Code: -1, Msg: err.Error()}
 	}
-	return OKResponse{0, "ok"}
+	return Response{Code: 0, Msg: "ok", Data: data}
 }
 
 // UpdateUsersPassword 重置密码
@@ -98,13 +98,13 @@ func UpdateUsersPassword(c *gin.Context) interface{} {
 	var u = global.RegisteruserParams{}
 	err := c.ShouldBind(&u)
 	if err != nil {
-		return ErrorResponse{-1, err.Error()}
+		return Response{Code: -1, Msg: err.Error()}
 	}
-	err = service.UpdateUsersPassword(&u)
+	_, err = service.UpdateUsersPassword(&u)
 	if err != nil {
-		return ErrorResponse{-1, err.Error()}
+		return Response{Code: -1, Msg: err.Error()}
 	}
-	return OKResponse{0, "ok"}
+	return Response{Code: 0, Msg: "ok"}
 }
 
 // GetUsersByID  get xxx by id
@@ -112,13 +112,13 @@ func GetUsersByID(c *gin.Context) interface{} {
 	var u = db.Users{}
 	err := c.ShouldBind(&u)
 	if err != nil {
-		return ErrorResponse{-1, err.Error()}
+		return Response{Code: -1, Msg: err.Error()}
 	}
 	data, err := service.GetUsersByID(u.ID)
 	if err != nil {
-		return ErrorResponse{-1, err.Error()}
+		return Response{Code: -1, Msg: err.Error()}
 	}
-	return OKResponse{0, data}
+	return Response{Code: 0, Msg: "ok", Data: data}
 }
 
 // ListUsers // list by page condition
@@ -126,13 +126,14 @@ func ListUsers(c *gin.Context) interface{} {
 	var u = db.Users{PageSize: 10, PageNo: 1}
 	err := c.ShouldBind(&u)
 	if err != nil {
-		return ErrorResponse{-1, err.Error()}
+		return Response{Code: -1, Msg: err.Error()}
 	}
 	data, err := service.ListUsers(&u)
 	if err != nil {
-		return ErrorResponse{-1, err.Error()}
+		return Response{Code: -1, Msg: err.Error()}
 	}
-	return OKResponse{0, data}
+	return Response{Code: 0, Msg: "ok", Data: data}
+
 }
 
 // DeleteUsers Delete
@@ -140,13 +141,13 @@ func DeleteUsers(c *gin.Context) interface{} {
 	var u = db.Users{}
 	err := c.ShouldBind(&u)
 	if err != nil {
-		return ErrorResponse{-1, err.Error()}
+		return Response{Code: -1, Msg: err.Error()}
 	}
 	err = service.DeleteUsers(u.ID)
 	if err != nil {
-		return ErrorResponse{-1, err.Error()}
+		return Response{Code: -1, Msg: err.Error()}
 	}
-	return OKResponse{0, "ok"}
+	return Response{Code: 0, Msg: "ok"}
 }
 
 // GenerateCaptcha 验证码

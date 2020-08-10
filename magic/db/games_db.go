@@ -37,15 +37,17 @@ func GetGamesByID(id int) (*Games, error) {
 }
 
 // AddGames 新增
-func AddGames(o *Games) error {
+func AddGames(o *Games) (*Games, error) {
 	db := global.MYSQL
-	return db.Create(o).Error
+	err := db.Create(o).Error
+	return o, err
 }
 
 // UpdateGames 修改
-func UpdateGames(o *Games) error {
+func UpdateGames(o *Games) (*Games, error) {
 	db := global.MYSQL
-	return db.Table("games").Where("_id=?", o.ID).Update(o).Error
+	err := db.Table("games").Where("_id=?", o.ID).Update(o).Error
+	return o, err
 }
 
 // ListGames 分页条件查询

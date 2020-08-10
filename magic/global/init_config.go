@@ -20,11 +20,11 @@ var (
 
 // InitGlobalConn 初始化
 func InitGlobalConn() {
+	godotenv.Load() // 加载 .env 配置文件
 	initMysql()
 	initRedis()
 }
 func initMysql() {
-	godotenv.Load() // 加载 .env 配置文件
 	if MYSQL == nil {
 		var err error
 		count := 1
@@ -49,7 +49,6 @@ func initMysql() {
 }
 
 func initRedis() {
-
 	if REDIS == nil {
 		pool := &redis.Pool{
 			// Other pool configuration not shown in this example.

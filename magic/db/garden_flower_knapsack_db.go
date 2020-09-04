@@ -22,15 +22,15 @@ CREATE TABLE `garden_flower_knapsack` (
 // GardenFlowerKnapsack  背包
 type GardenFlowerKnapsack struct {
 	ID       int    `gorm:"column:_id" json:"_id" form:"_id"`
-	GardenID int    `gorm:"column:garden_id" json:"garden_id" form:"garden_id"`
-	SeedID   int    `gorm:"column:seed_id" json:"seed_id" form:"seed_id"`
-	SeedNum  int    `gorm:"column:seed_num" json:"seed_num" form:"seed_num"`
+	GardenID string `gorm:"column:garden_id" json:"garden_id" form:"garden_id"`
+	SeedID   int    `gorm:"column:seed_id;default:null" json:"seed_id" form:"seed_id"`
+	SeedNum  int    `gorm:"column:seed_num;default:null" json:"seed_num" form:"seed_num"`
 	Cate     int    `gorm:"column:cate" json:"cate" form:"cate"`
-	PropID   int    `gorm:"column:prop_id" json:"prop_id" form:"prop_id"`
-	PropNum  int    `gorm:"column:prop_num" json:"prop_num" form:"prop_num"`
+	PropID   int    `gorm:"column:prop_id;default:null" json:"prop_id" form:"prop_id"`
+	PropNum  int    `gorm:"column:prop_num;default:null" json:"prop_num" form:"prop_num"`
 	Page     int    `json:"page" form:"page" gorm:"-" `
-	SeedName string `json:"seed_name" form:"seed_name" `
-	PropName string `json:"prop_name" form:"prop_name" `
+	SeedName string `json:"seed_name" form:"seed_name" gorm:"-" `
+	PropName string `json:"prop_name" form:"prop_name" gorm:"-" `
 }
 
 // TableName 表名
@@ -71,7 +71,7 @@ func UpdateGardenFlowerKnapsackHandleSeedNumZelo(o *GardenFlowerKnapsack, tx ...
 }
 
 // ListGardenFlowerKnapsack2 查询 根据花园id查询出所有的 花 需要改进 连表之类的 TODO
-func ListGardenFlowerKnapsack2(gardenid int, page int) ([]*GardenFlowerKnapsack, error) {
+func ListGardenFlowerKnapsack2(gardenid string, page int) ([]*GardenFlowerKnapsack, error) {
 	res := make([]*GardenFlowerKnapsack, 0)
 	db := global.MYSQL
 	sql := "select * from garden_flower_knapsack where garden_id = ? order by atlas_id  limit ?,?"
@@ -104,22 +104,32 @@ func CountGardenFlowerKnapsack(o *GardenFlowerKnapsack) (int64, error) {
 }
 
 // CountGardenFlowerKnapsackV2 查询出某个花园下的背包下某个种子的总的数量
-func CountGardenFlowerKnapsackV2(gardenID int, seedID int) (*GardenFlowerKnapsack, error) {
+func CountGardenFlowerKnapsackV2(gardenID string, seedID int) (*GardenFlowerKnapsack, error) {
 	var tmp GardenFlowerKnapsack
 	err := global.MYSQL.Table("garden_flower_knapsack").Where("garden_id = ? and seed_id = ?", gardenID, seedID).First(&tmp).Error
 	return &tmp, err
 }
 
 // IsExistGardenFlowerKnapsackSeed 背包是否存在种子
-func IsExistGardenFlowerKnapsackSeed(gardenID int, seedID int) (*GardenFlowerKnapsack, error) {
+func IsExistGardenFlowerKnapsackSeed(gardenID string, seedID int) (*GardenFlowerKnapsack, error) {
 	var res GardenFlowerKnapsack
 	err := global.MYSQL.Table("garden_flower_knapsack").Where("garden_id = ? and seed_id = ?", gardenID, seedID).First(&res).Error
 	return &res, err
 }
 
 // IsExistGardenFlowerKnapsackProp 背包是否存在道具
-func IsExistGardenFlowerKnapsackProp(gardenID int, propID int) (*GardenFlowerKnapsack, error) {
+func IsExistGardenFlowerKnapsackProp(gardenID string, propID int) (*GardenFlowerKnapsack, error) {
 	var res GardenFlowerKnapsack
 	err := global.MYSQL.Table("garden_flower_knapsack").Where("garden_id = ? and prop_id = ?", gardenID, propID).First(&res).Error
 	return &res, err
+}
+
+// DieReduce 染色剂或者其它道具 ----
+func DieReduce(propNum int, gardenID string, propID int, tx ...*gorm.DB) error {
+	sql := "update garden_flower_knapsack set prop_num = ?  where prop_id = ? and garden_id = ?"
+	db := global.MYSQL
+	if len(tx) != 0 {
+		db = tx[0]
+	}
+	return db.Exec(sql, propNum, propID, gardenID).Error
 }

@@ -4,7 +4,6 @@ import (
 	"errors"
 	"magic/global"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -22,7 +21,7 @@ var ErrTokenExpired = errors.New("Token is expired")
 
 // CustomClaims 载荷，可以加一些自己需要的信息
 type CustomClaims struct {
-	UserID   int    `json:"user_id"`
+	UserID   string `json:"user_id"`
 	Username string `json:"username"`
 	Phone    string `json:"phone"`
 	Nickname string `json:"nickname"`
@@ -132,7 +131,7 @@ func JWTAuth() gin.HandlerFunc {
 			return
 		}
 		// 3.token 是否有效 是否过期 TODO
-		if ok, err := isTokenExist(token, strconv.Itoa(claims.UserID)+"__"+claims.Phone); err != nil || !ok {
+		if ok, err := isTokenExist(token, claims.UserID+"__"+claims.Phone); err != nil || !ok {
 			c.JSON(http.StatusForbidden, gin.H{
 				"code": -1,
 				"msg":  "token已过期，请重新登录",
@@ -159,7 +158,7 @@ func JWTAuth() gin.HandlerFunc {
 					SameSite: http.SameSiteLaxMode,
 				})
 				//刷新历史记录
-				setToken(newtoken, strconv.Itoa(claims.UserID)+"__"+claims.Phone)
+				setToken(newtoken, claims.UserID+"__"+claims.Phone)
 			}
 		}
 

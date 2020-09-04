@@ -64,6 +64,7 @@ func RegisterUser(req *global.RegisteruserParams, ua string) error {
 	}
 	// 2. 注册用户
 	user := &db.Users{
+		ID:       utils.GetUUID(),
 		Username: req.Username,
 		Password: req.Password,
 		Phone:    req.Phone,
@@ -149,7 +150,7 @@ func UpdateUsers(b *db.Users) (*db.Users, error) {
 }
 
 // GetUsersByID get by id
-func GetUsersByID(id int) (*db.Users, error) {
+func GetUsersByID(id string) (*db.Users, error) {
 	return db.GetUsersByID(id)
 }
 
@@ -167,7 +168,7 @@ func ListUsers(b *db.Users) (*db.DataStore, error) {
 }
 
 // DeleteUsers delete
-func DeleteUsers(id int) error {
+func DeleteUsers(id string) error {
 	return db.DeleteUsers(id)
 }
 

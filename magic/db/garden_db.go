@@ -2,6 +2,7 @@ package db
 
 import (
 	"magic/global"
+	"magic/utils"
 	"math"
 	"strconv"
 
@@ -41,19 +42,25 @@ CREATE TABLE `garden` (
 
 // Garden Garden
 type Garden struct {
-	ID         int    `json:"_id" form:"_id" gorm:"column:_id;primary_key;auto_increment;comment:'主键'"`
-	GName      string `json:"g_name" form:"g_name" gorm:"column:g_name;comment:'花园名称'"`
-	GInfo      string `json:"g_info" form:"g_info" gorm:"column:g_info;comment:'花园公告'"`
-	GLevel     int    `json:"g_level" form:"g_level" gorm:"column:g_level;comment:'花园等级'"`
-	IsSignin   int    `json:"is_signin" form:"is_signin" gorm:"column:is_signin;comment:'当天是否签到 1没有签到 2签到'"`
-	SignDays   string `json:"sign_days" form:"sign_days" gorm:"column:sign_days;comment:'累计签到天数'"`
-	GAtlas     string `json:"g_atlas" form:"g_atlas" gorm:"column:g_atlas;comment:'花园图谱数量'"`
-	GCurrentEx int    `json:"g_current_ex" form:"g_current_ex" gorm:"column:g_current_ex;comment:'当天获得的经验'"`
-	GTotaltEx  int    `json:"g_total_ex" form:"g_total_ex" gorm:"column:g_total_ex;comment:'累计获得的经验'"`
-	GLevelStr  string `json:"g_level_str" form:"g_level_str" gorm:"column:g_level_str;comment:'xx'"`  // 见习魔法学徒
-	GLevelCha  string `json:"g_level_cha" form:"g_level_cha"  gorm:"column:g_level_cha;comment:'xx'"` // (经验:3/200)
-	GSowExp    int    `json:"g_sow_exp" form:"g_sow_exp"  gorm:"column:g_sow_exp"`
-	GHandleExp int    `json:"g_handle_exp" form:"g_handle_exp"  gorm:"column:g_handle_exp"`
+	ID          string `json:"_id" form:"_id" gorm:"column:_id;primary_key;comment:'主键'"`
+	GName       string `json:"g_name" form:"g_name" gorm:"column:g_name;comment:'花园名称'"`
+	GInfo       string `json:"g_info" form:"g_info" gorm:"column:g_info;comment:'花园公告'"`
+	GLevel      int    `json:"g_level" form:"g_level" gorm:"column:g_level;comment:'花园等级'"`
+	IsSignin    int    `json:"is_signin" form:"is_signin" gorm:"column:is_signin;comment:'当天是否签到 1没有签到 2签到'"`
+	GSigninTime string `json:"g_signin_time" form:"g_signin_time" gorm:"column:g_signin_time"`
+	SignDays    int    `json:"sign_days" form:"sign_days" gorm:"column:sign_days;comment:'累计签到天数'"`
+	GAtlas      int    `json:"g_atlas" form:"g_atlas" gorm:"column:g_atlas;comment:'花园图谱数量'"`
+	GCurrentEx  int    `json:"g_current_ex" form:"g_current_ex" gorm:"column:g_current_ex;comment:'当天获得的经验'"`
+	GTotaltEx   int    `json:"g_total_ex" form:"g_total_ex" gorm:"column:g_total_ex;comment:'累计获得的经验'"`
+	GLevelStr   string `json:"g_level_str" form:"g_level_str" gorm:"column:g_level_str;comment:'xx'"`  // 见习魔法学徒
+	GLevelCha   string `json:"g_level_cha" form:"g_level_cha"  gorm:"column:g_level_cha;comment:'xx'"` // (经验:3/200)
+	GSowExp     int    `json:"g_sow_exp" form:"g_sow_exp"  gorm:"column:g_sow_exp"`
+	GHandleExp  int    `json:"g_handle_exp" form:"g_handle_exp"  gorm:"column:g_handle_exp"`
+}
+
+// HandleGbUpdateInsertHistory gb变化时存入历史表
+func (o *Garden) HandleGbUpdateInsertHistory(tx ...*gorm.DB) string {
+	return "garden"
 }
 
 // TableName 表名
@@ -127,12 +134,21 @@ func (o *Garden) ComputeCurrentLevel(tx ...*gorm.DB) (*Garden, error) {
 }
 
 // GetGardenByID 根据id查询一个
-func GetGardenByID(id int) (*Garden, error) {
+func GetGardenByID(id string) (*Garden, error) {
 	db := global.MYSQL
 	o := &Garden{}
 	err := db.Table("garden").Where("_id = ?", id).First(o).Error
 	o.ComputeCurrentLevel()
 	return o, err
+}
+
+// ListGarden 查询所有花园
+func ListGarden() ([]*Garden, error) {
+	res := make([]*Garden, 0)
+	db := global.MYSQL
+	sql := "select * from garden where sign_days >1"
+	err := db.Raw(sql).Scan(&res).Error
+	return res, err
 }
 
 // AddGarden 新增
@@ -150,8 +166,9 @@ func UpdateGarden(o *Garden, tx ...*gorm.DB) (*Garden, error) {
 	if tx != nil {
 		db = tx[0]
 	}
+	// sql := "update garden set g_name = ?,g_info = ? where _id = ?"
+	// err := db.Exec(sql, o.GName, o.GInfo, o.ID).First(o).Error
 	err := db.Table("garden").Where("_id=?", o.ID).Update(o).First(o).Error
-
 	return o, err
 }
 
@@ -206,4 +223,66 @@ func GetSignInRewardsProp(days int) ([]*GardenSigninReward, error) {
 	var res []*GardenSigninReward
 	err := db.Raw(sql, days).Scan(&res).Error
 	return res, err
+}
+
+// -----------gb  历史
+
+// GardenGbDetail GardenGbDetail
+type GardenGbDetail struct {
+	ID       int    `json:"id" form:"id" gorm:"column:id;primary_key;auto_increment;comment:'主键'"`
+	GbNum    int    `json:"gb_num" form:"gb_num" gorm:"column:gb_num;comment:'本次获得的数量'"`
+	GardenID string `json:"g_garden_id" form:"g_garden_id" gorm:"column:g_garden_id"`
+	GbTime   string `json:"gb_time" form:"gb_time" gorm:"column:gb_time;comment:'时间'"`
+	GbSource string `json:"gb_source" form:"gb_source" gorm:"column:gb_source;comment:'获得来源'"`
+	GbDetail string `json:"gb_detail" form:"gb_detail" gorm:"column:gb_detail;comment:'描述'"`
+	GbTotal  int    `json:"gb_total" form:"gb_total" gorm:"column:gb_total;comment:'剩余总数'"`
+	PageNo   int    `json:"page" form:"page" gorm:"-"`
+	PageSize int    `json:"page_size" form:"page_size" gorm:"-"`
+}
+
+// TableName 表名
+func (o *GardenGbDetail) TableName() string {
+	return "garden_gb_detail"
+}
+
+// SaveGbHistory SaveGbHistory
+func SaveGbHistory(num int, source, detail string, garden *Garden) {
+	// global.MYSQL
+	user, _ := GetUsersByID(garden.ID)
+	o := &GardenGbDetail{
+		GbNum:    num,
+		GardenID: garden.ID,
+		GbTime:   utils.GetNowTimeString(),
+		GbSource: source,
+		GbTotal:  user.GBMoney,
+		GbDetail: detail,
+	}
+	AddGardenGbDetail(o)
+
+}
+
+// AddGardenGbDetail 新增
+func AddGardenGbDetail(o *GardenGbDetail, tx ...*gorm.DB) (*GardenGbDetail, error) {
+	db := global.MYSQL
+	if len(tx) > 0 {
+		db = tx[0]
+	}
+	err := db.Create(o).Error
+	return o, err
+}
+
+// ListGardenGbDetail 分页条件查询
+func ListGardenGbDetail(o *GardenGbDetail) ([]*GardenGbDetail, error) {
+	db := global.MYSQL
+	res := make([]*GardenGbDetail, 0)
+	err := db.Table("garden_gb_detail").Where(o).Offset((o.PageNo - 1) * o.PageSize).Limit(o.PageSize).Find(&res).Error
+	return res, err
+}
+
+// CountGardenGbDetail 条件数量
+func CountGardenGbDetail(o *GardenGbDetail) (int64, error) {
+	db := global.MYSQL
+	var count int64
+	err := db.Table("garden_gb_detail").Where(o).Count(&count).Error
+	return count, err
 }

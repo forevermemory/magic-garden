@@ -31,6 +31,7 @@ func InitRouterV1(r *gin.Engine, prefix string) *gin.Engine {
 			"message": "ok",
 		})
 	})
+	r.POST("/pay_order/pay/onlinePay", handle)
 	// 生成验证码图片
 	r.GET("/captcha", controller.GenerateCaptcha)
 
@@ -44,6 +45,12 @@ func InitRouterV1(r *gin.Engine, prefix string) *gin.Engine {
 		user.POST("/update", route(controller.UpdateUsers))
 		user.POST("/reset/password", route(controller.UpdateUsersPassword))
 		user.GET("/user/get", route(controller.GetUsersByID))
+		// 好友系统
+		user.POST("/friends/add", route(controller.UpdateUsersPassword))
+		user.POST("/friends/delete", route(controller.UpdateUsersPassword))
+		user.POST("/friends/list", route(controller.UpdateUsersPassword))
+		user.POST("/friends/list/:oid", route(controller.UpdateUsersPassword))
+
 	}
 
 	userGame := r.Group(prefix + "/usergame")
@@ -53,12 +60,29 @@ func InitRouterV1(r *gin.Engine, prefix string) *gin.Engine {
 	}
 	garden := r.Group(prefix + "/garden")
 	{
+		// gb 获得历史 购买种子道具
+		garden.GET("/gb/history", route(controller.ListGardenGbDetail))
+		garden.POST("/gb/shop/buy/seed", route(controller.BuyShopSeed))
+		garden.POST("/gb/shop/buy/prop", route(controller.BuyShopProp))
+		// 魔法屋
+		garden.GET("/magician/list", route(controller.ListGardenMagician))
+		garden.POST("/magician/detail", route(controller.GardenMagicianDetail))
+		garden.POST("/magician/synthesis", route(controller.GardenMagicianSynthesis))
+		// 花房  花篮和花瓶
+		garden.GET("/house/list", route(controller.GardenHouseList))
+		garden.GET("/house/statistics", route(controller.GardenHouseStatistics))
+
+		// 送花系统 好友系统
+
+		// 偷花 帮助系统  您成功采摘了好友一朵 xxx,花朵已进入您的花篮
+		// 采摘失败 已经摘过了,做人不要太贪心哦
+
 		// 初始化花园
 		garden.GET("/init", route(controller.InitGarden))
 		// 查询花园详情
 		garden.GET("/list/:oid", route(controller.GetGardenByID))
 		// 更新花园的公告等信息
-		garden.POST("/update", route(controller.UpdateGarden))
+		garden.POST("/update/baseinfo", route(controller.UpdateGarden))
 		// 查看背包
 		garden.GET("/knapsack/list", route(controller.ListGardenKnapsack))
 		// 花园帮助
@@ -73,6 +97,9 @@ func InitRouterV1(r *gin.Engine, prefix string) *gin.Engine {
 		garden.POST("/flowerpot/sow", route(controller.GardeFlowerpotSow))
 		garden.POST("/flowerpot/lookafter", route(controller.GardeFlowerpotLookAfter))
 		garden.POST("/flowerpot/remove", route(controller.GardeFlowerpotRemove))
+		garden.POST("/flowerpot/dyeing", route(controller.GardeFlowerpotDyeing))
+		garden.POST("/flowerpot/fertilizer", route(controller.GardeFlowerpotFertilizer))
+		garden.POST("/flowerpot/harvest", route(controller.HarvestFlower))
 		// garden.GET("/flowerpot/purchase", route(controller.GardeFlowerpotPurchase))
 		// 收支统计 TODO
 	}

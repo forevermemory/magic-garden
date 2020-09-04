@@ -36,6 +36,9 @@ type GardenSeeds struct {
 	ForecastNum   int    `gorm:"column:forecast_num" json:"forecast_num" form:"forecast_num"`
 	ForecastTime  int    `gorm:"column:forecast_time" json:"forecast_time" form:"forecast_time"`
 	Meaning       string `gorm:"column:meaning" json:"meaning" form:"meaning"`
+
+	PageNo   int `json:"page" form:"page" gorm:"-"`
+	PageSize int `json:"page_size" form:"page_size" gorm:"-"`
 }
 
 // TableName 表名
@@ -49,4 +52,49 @@ func GetGardenSeedsByID(seedid int) (*GardenSeeds, error) {
 	var res GardenSeeds
 	err := db.Table("garden_seeds").Where("_id = ? ", seedid).First(&res).Error
 	return &res, err
+}
+
+// ListGardenMagician 魔法屋可以合成的种子列表
+func ListGardenMagician(o *GardenSeeds) ([]GardenSeeds, error) {
+	db := global.MYSQL
+	var res []GardenSeeds
+	sql := "select * from garden_seeds where rarity = 2 limit ?,?"
+	err := db.Raw(sql, o.PageNo*global.PageSize, global.PageSize).Scan(&res).Error
+	return res, err
+}
+
+// CountGardenMagician 条件数量
+func CountGardenMagician(o *GardenSeeds) (int64, error) {
+	var count int64
+	err := global.MYSQL.Table("garden_seeds").Where("rarity = 2").Count(&count).Error
+	return count, err
+}
+
+// MagicianSeedSynthesisMethods 合成方式
+type MagicianSeedSynthesisMethods struct {
+	SeedID         int    `json:"seed_id"`
+	AtlasID        int    `json:"atlas_id"`
+	Num            int    `json:"num"`
+	FlowerCateName string `json:"flower_cate_name"`
+	FlowerImage    string `json:"flower_image"`
+	Rarity         int    `json:"rarity"`
+	SeedName       string `json:"seed_name"`
+	GardenID       string `json:"garden_id"`
+	TotalNum       int    `json:"total_num"`
+}
+
+// GardenMagicianDetail  魔法屋查询一个种子合成所需材料
+func GardenMagicianDetail(seedID int, gardenID string) ([]MagicianSeedSynthesisMethods, error) {
+	var res []MagicianSeedSynthesisMethods
+	sql := `
+		SELECT aa.*,bb.flower_cate_name,bb.flower_image,bb.rarity,cc.seed_name,dd.garden_id,IFNULL(dd.num,0) total_num 
+		FROM garden_synthesis_methods aa 
+		left join garden_atlas bb on aa.atlas_id = bb._id 
+		left join garden_seeds cc on aa.seed_id = cc._id 
+		left join  garden_flower_house dd on dd.atlas_id = aa.atlas_id
+		WHERE aa.seed_id = ?  and ( dd.garden_id = ? or dd.garden_id is null)
+		ORDER BY atlas_id
+	`
+	err := global.MYSQL.Raw(sql, seedID, gardenID).Scan(&res).Error
+	return res, err
 }

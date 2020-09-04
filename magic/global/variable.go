@@ -1,5 +1,8 @@
 package global
 
+// Port 服务启动端口
+var Port string
+
 // PageSize 分页大小
 var PageSize int = 10
 

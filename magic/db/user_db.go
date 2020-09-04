@@ -2,6 +2,8 @@ package db
 
 import (
 	"magic/global"
+
+	"github.com/jinzhu/gorm"
 )
 
 /*
@@ -27,7 +29,7 @@ CREATE TABLE `users` (
 
 // Users Users
 type Users struct {
-	ID             int    `json:"_id" form:"_id" gorm:"column:_id;primary_key;auto_increment;comment:'主键'"`
+	ID             string `json:"_id" form:"_id" gorm:"column:_id;primary_key;comment:'主键'"`
 	Username       string `json:"username" form:"username" gorm:"column:username;comment:'用户名'"`
 	Nickname       string `json:"nickname" form:"nickname" gorm:"column:nickname;comment:'昵称'"`
 	Password       string `json:"password" form:"password" gorm:"column:password;comment:'密码'"`
@@ -35,7 +37,7 @@ type Users struct {
 	Status         int    `json:"status" form:"status" gorm:"column:status;comment:'状态'"`
 	IsVip          int    `json:"is_vip" form:"is_vip" gorm:"column:is_vip;comment:'是否是会员'"`
 	Desc           string `json:"desc" form:"desc" gorm:"column:desc;comment:'desc'"`
-	GBMoney        string `json:"gb_money" form:"gb_money" gorm:"column:gb_money;comment:'FGB'"`
+	GBMoney        int    `json:"gb_money" form:"gb_money" gorm:"column:gb_money;comment:'FGB'"`
 	Yuanbao        string `json:"yuanbao" form:"yuanbao" gorm:"column:yuanbao;comment:'重置的元宝数量'"`
 	ChangePassTime string `json:"change_pass_time" form:"change_pass_time" gorm:"column:change_pass_time;comment:'desc'"`
 	PageNo         int    `json:"-" form:"page" gorm:"-"`
@@ -48,7 +50,7 @@ func (o *Users) TableName() string {
 }
 
 // DeleteUsers 根据id删除
-func DeleteUsers(id int) error {
+func DeleteUsers(id string) error {
 	return nil
 	// return global.MYSQL.Table("users").Where("id = ?", id).Update("IS_DELETE", 1).Error
 }
@@ -61,7 +63,7 @@ func GetUsersByUsernameAndPassword(username string, password string) (*Users, er
 }
 
 // GetUsersByID 根据id查询一个
-func GetUsersByID(id int) (*Users, error) {
+func GetUsersByID(id string) (*Users, error) {
 	o := &Users{}
 	err := global.MYSQL.Table("users").Where("_id = ?", id).First(o).Error
 	return o, err
@@ -82,13 +84,31 @@ func UsersLoginByUsernameAndPassword(o *Users) (*Users, error) {
 }
 
 // AddUsers 新增
-func AddUsers(o *Users) error {
-	return global.MYSQL.Create(o).Error
+func AddUsers(o *Users, tx ...*gorm.DB) error {
+	db := global.MYSQL
+	if tx != nil {
+		db = tx[0]
+	}
+	return db.Create(o).Error
 }
 
-// UpdateUsers 修改
-func UpdateUsers(o *Users) (*Users, error) {
-	err := global.MYSQL.Table("users").Where("_id=?", o.ID).Update(o).Error
+// UpdateUsers 修改 TODO 待优化 只提供更新某几个信息
+func UpdateUsers(o *Users, tx ...*gorm.DB) (*Users, error) {
+	db := global.MYSQL
+	if tx != nil {
+		db = tx[0]
+	}
+	err := db.Table("users").Where("_id=?", o.ID).Update(o).Error
+	return o, err
+}
+
+// UpdateUsersGB 更新GB
+func UpdateUsersGB(o *Users, tx ...*gorm.DB) (*Users, error) {
+	db := global.MYSQL
+	if tx != nil {
+		db = tx[0]
+	}
+	err := db.Table("users").Where("_id=?", o.ID).Update(o).Error
 	return o, err
 }
 

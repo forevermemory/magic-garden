@@ -16,6 +16,6 @@ func main() {
 
 	go cron.InitCronTask()
 
-	fmt.Println("Listening and serving HTTP on :8000")
-	r.Run(":8000")
+	fmt.Println("Listening and serving HTTP on :", global.Port)
+	r.Run(":" + global.Port)
 }

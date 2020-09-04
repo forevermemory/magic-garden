@@ -20,9 +20,13 @@ var (
 
 // InitGlobalConn 初始化
 func InitGlobalConn() {
-	godotenv.Load() // 加载 .env 配置文件
+	godotenv.Load("./.env") // 加载 .env 配置文件
 	initMysql()
 	initRedis()
+	initVar()
+}
+func initVar() {
+	Port = os.Getenv("port")
 }
 func initMysql() {
 	if MYSQL == nil {

@@ -11,7 +11,6 @@ import (
 	"magic/service"
 	"magic/utils/middleware"
 	"net/http"
-	"strconv"
 	"time"
 
 	jwtgo "github.com/dgrijalva/jwt-go"
@@ -199,7 +198,7 @@ func generateToken(c *gin.Context, user *db.Users) {
 		return
 	}
 	// 存入redis
-	if err := setToken(token, strconv.Itoa(user.ID)+"__"+user.Phone); err != nil {
+	if err := setToken(token, user.ID+"__"+user.Phone); err != nil {
 		c.JSON(http.StatusOK, ErrorResponse{
 			Errcode: -1,
 			Message: err.Error(),

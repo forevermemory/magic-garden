@@ -29,7 +29,8 @@ CREATE TABLE `garden_flowerpot` (
   `next_stage` varchar(255) DEFAULT NULL COMMENT '花的成长阶段 1 花苗 2 花蕾 3 开花',
   `next_stage_str` varchar(255) DEFAULT NULL COMMENT '成长剩余时间',
   `sow_time` varchar(255) DEFAULT NULL COMMENT '播种时间',
-  `is_change_color` int(11) DEFAULT 1 COMMENT '是否使用染色剂 1 未使用 2使用了',
+  `is_change_color` int(11) DEFAULT 1 COMMENT '是否可以染色 1 不可以  2 可以',
+  `is_use_dye` int(11) DEFAULT 1 COMMENT '是否使用染色剂 1 未使用 2使用了',
   `change_result` varchar(255) DEFAULT NULL COMMENT '染色结果 string',
   `is_harvest` int(11) DEFAULT 1 COMMENT '是否可以收获 1不可以 2 可以',
   `disaster` int(11) DEFAULT 1 COMMENT '自然灾害类型 1健康 2干旱(浇水) 3有虫(除虫) 4有草(除草) ',
@@ -40,8 +41,8 @@ CREATE TABLE `garden_flowerpot` (
 // GardenFlowerpot 花盆
 type GardenFlowerpot struct {
 	ID              int    `gorm:"column:_id" json:"_id" form:"_id"`
-	UserID          int    `gorm:"column:user_id" json:"user_id" form:"user_id"`
-	GardenID        int    `gorm:"column:garden_id" json:"garden_id" form:"garden_id"`
+	UserID          string `gorm:"column:user_id" json:"user_id" form:"user_id"`
+	GardenID        string `gorm:"column:garden_id" json:"garden_id" form:"garden_id"`
 	Number          int    `gorm:"column:number" json:"number" form:"number"`
 	IsLock          int    `gorm:"column:is_lock" json:"is_lock" form:"is_lock"`
 	IsSow           int    `gorm:"column:is_sow" json:"is_sow" form:"is_sow"`
@@ -56,6 +57,7 @@ type GardenFlowerpot struct {
 	NextStageStr    string `gorm:"column:next_stage_str" json:"next_stage_str" form:"next_stage_str"`
 	SowTime         string `gorm:"column:sow_time" json:"sow_time" form:"sow_time"`
 	IsChangeColor   int    `gorm:"column:is_change_color" json:"is_change_color" form:"is_change_color"`
+	IsUseDye        int    `gorm:"column:is_use_dye" json:"is_use_dye" form:"is_use_dye"`
 	ChangeResult    string `gorm:"column:change_result" json:"change_result" form:"change_result"`
 	IsHarvest       int    `gorm:"column:is_harvest" json:"is_harvest" form:"is_harvest"`
 	Disaster        int    `gorm:"column:disaster" json:"disaster" form:"disaster"`
@@ -143,31 +145,31 @@ func (o *GardenFlowerpot) ComputeImportantParams(tx ...*gorm.DB) (*GardenFlowerp
 		// fmt.Println("ph,pm,ps", ph, pm, ps)
 	} else if totals > seed.ForecastTime*3600 {
 		// 已经成花
-		// 是否需要重新计算
 		if o.IsHarvest == 1 {
-			atlas, err := GetGardenAtlasBySeedID(o.SeedID)
-			if err != nil {
-				return nil, err
+			// 对染色后的花盆不作处理 只对没有染色的花盆作处理
+			o.IsHarvest = 2      // 都设置为可以收获
+			if o.IsUseDye == 1 { // 未使用染色剂
+				atlas, err := GetGardenAtlasBySeedID(o.SeedID)
+				if err != nil {
+					return nil, err
+				}
+				// result := 0
+				// resultStr := ""
+				if len(atlas) == 0 {
+					return nil, errors.New("未知错误")
+				}
+				// 随机取一种颜色
+				rand.Seed(time.Now().UnixNano())
+				index = rand.Intn(len(atlas)) // [0,n)
+				// result = atlas[rx].ID
+				fmt.Println("rx---", index)
+				o.FlowerNum = seed.ForecastNum
+				if seed.ForecastNum > 1 {
+					o.FlowerNum = o.FlowerNumHandle + o.FlowerNumHandle
+				}
+				o.SeedResult = atlas[index].ID // 图谱id
+				o.SeedResultStr = atlas[index].FlowerCateName
 			}
-			result := 0
-			resultStr := ""
-			if len(atlas) == 0 {
-				return nil, errors.New("未知错误")
-			}
-			// 随机取一种颜色
-			rand.Seed(time.Now().UnixNano())
-			index = rand.Intn(len(atlas)) // [0,n)
-			// result = atlas[rx].ID
-			fmt.Println("rx---", index)
-			result = atlas[index].ID
-			resultStr = atlas[index].FlowerCateName
-			o.FlowerNum = seed.ForecastNum
-			if seed.ForecastNum > 1 {
-				o.FlowerNum = o.FlowerNumHandle + o.FlowerNumHandle
-			}
-			o.SeedResult = result // 图谱id
-			o.SeedResultStr = resultStr
-			o.IsHarvest = 2
 		}
 	}
 	// 当前阶段
@@ -201,8 +203,17 @@ func AddGardenFlowerpot(o *GardenFlowerpot) error {
 	return db.Create(o).Error
 }
 
+// GetGardenFlowerpotCanHavrest 查询可收获的花盆
+func GetGardenFlowerpotCanHavrest(gardenID string) ([]GardenFlowerpot, error) {
+	db := global.MYSQL
+	var res []GardenFlowerpot
+	err := db.Table("garden_flowerpot").Where("garden_id = ? and is_lock = 2 and is_harvest = 2", gardenID).Scan(&res).Error
+	// res.ComputeImportantParams()
+	return res, err
+}
+
 // GetGardenFlowerpotByID get one
-func GetGardenFlowerpotByID(gardenID int, flowerpotID int) (*GardenFlowerpot, error) {
+func GetGardenFlowerpotByID(gardenID string, flowerpotID int) (*GardenFlowerpot, error) {
 	db := global.MYSQL
 	var res GardenFlowerpot
 	err := db.Table("garden_flowerpot").Where("garden_id = ? and number = ? and is_lock = 2 and is_sow = 2", gardenID, flowerpotID).First(&res).Error
@@ -211,7 +222,7 @@ func GetGardenFlowerpotByID(gardenID int, flowerpotID int) (*GardenFlowerpot, er
 }
 
 // GetGardenFlowerpotByIDIsCanSow 是否花盆可播种 返回一个盆
-func GetGardenFlowerpotByIDIsCanSow(gardenID int, flowerpotID int) (*GardenFlowerpot, error) {
+func GetGardenFlowerpotByIDIsCanSow(gardenID string, flowerpotID int) (*GardenFlowerpot, error) {
 	db := global.MYSQL
 	var res GardenFlowerpot
 	err := db.Table("garden_flowerpot").Where("garden_id = ? and number = ? and is_lock = 2 and is_sow = 1", gardenID, flowerpotID).First(&res).Error
@@ -219,7 +230,7 @@ func GetGardenFlowerpotByIDIsCanSow(gardenID int, flowerpotID int) (*GardenFlowe
 }
 
 // GetCanSowGardenFlowerpots 是否花盆可播种 返回多个盆
-func GetCanSowGardenFlowerpots(gardenID int) ([]*GardenFlowerpot, error) {
+func GetCanSowGardenFlowerpots(gardenID string) ([]*GardenFlowerpot, error) {
 	db := global.MYSQL
 	var res []*GardenFlowerpot
 	err := db.Table("garden_flowerpot").Where("garden_id = ? and is_lock = 2 and is_sow = 1", gardenID).Scan(&res).Error
@@ -236,8 +247,21 @@ func UpdateGardenFlowerpot(o *GardenFlowerpot, tx ...*gorm.DB) (*GardenFlowerpot
 	return o, err
 }
 
+// UpdateGardenFlowerpotWithRemove 移除花朵更新参数
+func UpdateGardenFlowerpotWithRemove(pot *GardenFlowerpot, tx ...*gorm.DB) error {
+	db := global.MYSQL
+	if tx != nil {
+		db = tx[0]
+	}
+	// pot.IsSow = 1
+	// pot.IsHarvest = 1
+	sql := "update garden_flowerpot set seed_id=0,is_sow = 1,seed_result_str = '',flower_num = 0,flower_num_haldle = 0,current_stage='',next_stage = '',next_stage_str = '',sow_time = '',change_result='',is_change_color=1,is_use_dye = 1,is_harvest=1 where _id = ?"
+	err := db.Exec(sql, pot.ID).Error
+	return err
+}
+
 // ListGardenFlowerpot 查询某个花园的花盆列表
-func ListGardenFlowerpot(gardenid int) ([]*GardenFlowerpot, error) {
+func ListGardenFlowerpot(gardenid string) ([]*GardenFlowerpot, error) {
 	res := make([]*GardenFlowerpot, 0)
 	resnew := make([]*GardenFlowerpot, 0)
 	db := global.MYSQL

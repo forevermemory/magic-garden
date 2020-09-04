@@ -12,7 +12,7 @@ date:2020-07-30 20:08:02
 type UserGames struct {
 	ID int `json:"_id" form:"_id" gorm:"column:_id;primary_key;auto_increment;comment:'主键'"`
 
-	UserID     int    `json:"user_id" form:"user_id" gorm:"column:user_id;comment:'用户id'"`
+	UserID     string `json:"user_id" form:"user_id" gorm:"column:user_id;comment:'用户id'"`
 	GameID     int    `json:"game_id" form:"game_id" gorm:"column:game_id;comment:'游戏id'"`
 	IsDelete   int    `json:"is_delete" form:"is_delete" gorm:"column:is_delete;comment:'是否删了这个游戏'"`
 	AddTime    string `json:"add_time" form:"add_time" gorm:"column:add_time;comment:'添加时间'"`
@@ -25,7 +25,7 @@ func (o *UserGames) TableName() string {
 }
 
 // GetUserGamesByUserAndGame UserAndGame
-func GetUserGamesByUserAndGame(userid int, gameid int) ([]*UserGames, error) {
+func GetUserGamesByUserAndGame(userid string, gameid int) ([]*UserGames, error) {
 	db := global.MYSQL
 	var o []*UserGames
 	err := db.Table("user_games").Where("user_id = ? and game_id = ?", userid, gameid).Find(&o).Error

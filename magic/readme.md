@@ -586,42 +586,375 @@
 请求方式
     post
 请求路径
-    /api/v1/garden/flowerpot/lookafter
+    /api/v1/garden/flowerpot/dyeing
 请求参数
     入参示例
-    {
-        "garden_id": 2,
-        "number": 1
-    }
+        {
+            "garden_id":"887ec461385e4ec69cec4fcabdabbaf8",
+            "number":1,
+        }
 返回结果
 {
     "code": 0,
     "msg": "ok",
     "data": {
-        "result": "移除成功"
+        "result": "当前花朵暂不支持染色,请正确操作"
+    }
+}
+{
+    "code": 0,
+    "msg": "ok",
+    "data": {
+        "result": "染色成功,您获得了蓝色雪花纷飞"
     }
 }
 ```
 
--   施肥 TODO
+-   施肥
 
 ```
 请求方式
     post
 请求路径
-    /api/v1/garden/flowerpot/lookafter
+    /api/v1/garden/flowerpot/fertilizer
 请求参数
     入参示例
     {
-        "garden_id": 2,
-        "number": 1
+        "garden_id": "887ec461385e4ec69cec4fcabdabbaf8",
+        "number": 2,
+        "prop_id": 4
+    }
+    // TODO 5 6 会直接报错
+返回结果
+{
+    "code": 0,
+    "msg": "ok",
+    "data": {
+        "result": "操作成功"
+    }
+}
+```
+
+-   收获
+
+```
+请求方式
+    post
+请求路径
+    /api/v1/garden/flowerpot/harvest
+请求参数
+    入参示例
+    普通一个一个收获
+        {
+            "garden_id": "887ec461385e4ec69cec4fcabdabbaf8",
+            "number": 2
+        }
+    vip一键收获
+        {
+            "garden_id": "887ec461385e4ec69cec4fcabdabbaf8",
+            "is_vip": 2
+        }
+返回结果
+{
+    "code": 0,
+    "msg": "收获成功",
+    "data": {
+        "result": [
+            "收获成功,经验值+2，GB+9000",
+            "恭喜您种出了一种新的花朵[紫色三色旋花]!!!经验值+600",
+            "您一共收获了4朵紫色三色旋花！",
+            "收获成功,经验值+2，GB+9000",
+            "恭喜您种出了一种新的花朵[粉色羽叶茑萝]!!!经验值+600",
+            "您一共收获了9朵粉色羽叶茑萝！",
+            "收获成功,经验值+2，GB+9000",
+            "恭喜您种出了一种新的花朵[蓝色金鱼草]!!!经验值+600",
+            "您一共收获了5朵蓝色金鱼草！"
+        ],
+        "result2": true,
+        "total": 0
+    }
+}
+
+{
+    "code": 0,
+    "msg": "收获成功",
+    "data": {
+        "result": [
+            "收获成功,经验值+2，GB+9000",
+            "您一共收获了4朵紫色三色旋花！",
+            "收获成功,经验值+2，GB+9000",
+            "您一共收获了9朵粉色羽叶茑萝！",
+            "收获成功,经验值+2，GB+9000",
+            "您一共收获了5朵蓝色金鱼草！"
+        ],
+        "result2": true,
+        "total": 0
+    }
+}
+```
+
+-   购买种子
+
+```
+请求方式
+    post
+请求路径
+    /api/v1/garden/gb/shop/buy/seed
+请求参数
+    入参示例
+        {
+            "garden_id": "887ec461385e4ec69cec4fcabdabbaf8",
+            "seed_id": 3,
+            "seed_num":2
+        }
+返回结果
+{
+    "code": 0,
+    "msg": "ok",
+    "data": {
+        "result": "购买成功,您获得2颗梅花,花费400GB"
+    }
+}
+```
+
+-   购买道具
+
+```
+请求方式
+    post
+请求路径
+    /api/v1/garden/gb/shop/buy/prop
+请求参数
+    入参示例
+        {
+            "garden_id": "887ec461385e4ec69cec4fcabdabbaf8",
+            "prop_id": 3,
+            "prop_num":2
+        }
+返回结果
+{
+    "code": 0,
+    "msg": "ok",
+    "data": {
+        "result": "购买成功,您获得2个中魔力营养液,花费5000GB"
+    }
+}
+```
+
+-   魔法屋可合成列表
+
+```
+请求方式
+    get
+请求路径
+    /api/v1/garden/magician/list?page=1
+请求参数
+    入参示例
+    page = 1
+返回结果
+{
+    "code": 0,
+    "msg": "ok",
+    "data": {
+        "total": 217,
+        "totalPage": 22,
+        "data": [
+            {
+                "_id": 121,
+                "raw_id": 121,
+                "img_url": "s_l_121.gif",
+                "level_num": 10,
+                "raw_price": 0,
+                "vip_price": 0,
+                "level_str": "见习魔法学徒",
+                "seed_name": "独孤求败",
+                "rarity": 2,
+                "is_change_color": 1,
+                "forecast_num": 1,
+                "forecast_time": 12,
+                "meaning": "不是光棍要种,是光棍更要种的光棍节非卖活动花!",
+                "page": 0,
+                "page_size": 0
+            }
+        ]
+    }
+}
+```
+
+-   魔法屋查询一个种子合成所需材料
+
+```
+请求方式
+    post
+请求路径
+    /api/v1/garden/magician/detail
+请求参数
+    入参示例
+    {
+        "garden_id":"887ec461385e4ec69cec4fcabdabbaf8",
+        "seed_id":115
+    }
+返回结果
+{
+    "code": 0,
+    "msg": "ok",
+    "data": [
+        {
+            "seed_id": 115,
+            "atlas_id": 120,
+            "num": 12,  // 合成所需数量
+            "flower_cate_name": "白色烈焰焚情",
+            "flower_image": "m_l_120.gif",
+            "rarity": 1,
+            "seed_name": "金色烈焰焚情",
+            "garden_id": "887ec461385e4ec69cec4fcabdabbaf8",
+            "total_num": 81 // 持有数量
+        },
+        {
+            "seed_id": 115,
+            "atlas_id": 121,
+            "num": 12,
+            "flower_cate_name": "红色烈焰焚情",
+            "flower_image": "m_l_121.gif",
+            "rarity": 1,
+            "seed_name": "金色烈焰焚情",
+            "garden_id": "887ec461385e4ec69cec4fcabdabbaf8",
+            "total_num": 45
+        },
+        {
+            "seed_id": 115,
+            "atlas_id": 122,
+            "num": 12,
+            "flower_cate_name": "黄色烈焰焚情",
+            "flower_image": "m_l_122.gif",
+            "rarity": 1,
+            "seed_name": "金色烈焰焚情",
+            "garden_id": "",
+            "total_num": 0
+        },
+        {
+            "seed_id": 115,
+            "atlas_id": 123,
+            "num": 12,
+            "flower_cate_name": "粉色烈焰焚情",
+            "flower_image": "m_l_123.gif",
+            "rarity": 1,
+            "seed_name": "金色烈焰焚情",
+            "garden_id": "",
+            "total_num": 0
+        },
+        {
+            "seed_id": 115,
+            "atlas_id": 319,
+            "num": 4,
+            "flower_cate_name": "银色烈焰焚情",
+            "flower_image": "m_l_319.gif",
+            "rarity": 2,
+            "seed_name": "金色烈焰焚情",
+            "garden_id": "",
+            "total_num": 0
+        }
+    ]
+}
+```
+
+-   魔法屋合成种子
+
+```
+请求方式
+    post
+请求路径
+    /api/v1/garden/magician/synthesis
+请求参数
+    入参示例
+    {
+        "garden_id":"887ec461385e4ec69cec4fcabdabbaf8",
+        "seed_id":115
     }
 返回结果
 {
     "code": 0,
     "msg": "ok",
     "data": {
-        "result": "移除成功"
+        "result": ["不满足合成条件"]
+    }
+}
+
+{
+    "code": 0,
+    "msg": "ok",
+    "data": {
+        "result": [
+            "合成成功,您获得了一颗金色烈焰焚情",
+            "您获得100经验",
+            "您获得1000GB"
+        ]
     }
 }
 ```
+
+-   查看花房里面花朵
+
+```
+请求方式
+    get
+请求路径
+    /api/v1/garden/house/list
+请求参数
+    入参示例
+        garden_id=887ec461385e4ec69cec4fcabdabbaf8
+        cate=1  // 花篮 cate=2 花瓶
+        page default=1
+返回结果
+{
+    "code": 0,
+    "msg": "ok",
+    "data": {
+        "total": 7,
+        "totalPage": 1,
+        "data": [
+            {
+                "_id": 26,
+                "garden_id": "887ec461385e4ec69cec4fcabdabbaf8",
+                "atlas_id": 114,
+                "num": 36, // 该种花朵持有数量
+                "cate": 1,
+                "seed_id": 35,
+                "flower_cate_name": "紫色三色旋花", // 名称
+                "flower_image": "m_l_114.gif",
+                "rarity": 0
+            }
+        ]
+    }
+}
+```
+
+-   查看花房里面花朵 -- 统计
+
+```
+请求方式
+    get
+请求路径
+    /api/v1/garden/house/statistics
+请求参数
+    入参示例
+        garden_id=887ec461385e4ec69cec4fcabdabbaf8
+        cate=1  // 花篮 cate=2 花瓶
+返回结果
+    // 您收获和采摘的花均存放于您的花篮中,共有鲜花8种,21朵
+    // 您收到的鲜花会存放在您的花瓶中,共有鲜花1种,1朵.
+{
+    "code": 0,
+    "msg": "ok",
+    "data": [
+        {
+            "total_duo": 216, // 所有花朵总数
+            "total_zhong": 7  // 种类
+        }
+    ]
+}
+```
+
+### 好友系统
+
+#### 新增好友

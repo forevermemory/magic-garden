@@ -4,7 +4,6 @@ import (
 	"magic/db"
 	"magic/global"
 	"magic/service"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -44,11 +43,7 @@ func UpdateGarden(c *gin.Context) interface{} {
 // GetGardenByID  get xxx by id
 func GetGardenByID(c *gin.Context) interface{} {
 	_id := c.Param("oid")
-	id, err := strconv.Atoi(_id)
-	if err != nil {
-		return Response{Code: -1, Msg: err.Error()}
-	}
-	data, err := service.GetGardenByID(id)
+	data, err := service.GetGardenByID(_id)
 	if err != nil {
 		return Response{Code: -1, Msg: err.Error()}
 	}
@@ -197,6 +192,162 @@ func GardeFlowerpotRemove(c *gin.Context) interface{} {
 		return Response{Code: -1, Msg: err.Error()}
 	}
 	data, err := service.GardeFlowerpotRemove(u)
+	if err != nil {
+		return Response{Code: -1, Msg: err.Error()}
+	}
+	return Response{Code: 0, Msg: "ok", Data: data}
+}
+
+// GardeFlowerpotDyeing  染色
+func GardeFlowerpotDyeing(c *gin.Context) interface{} {
+	var u = global.GardenPotParams{}
+	err := c.ShouldBind(&u)
+	if err != nil {
+		return Response{Code: -1, Msg: err.Error()}
+	}
+	data, err := service.GardeFlowerpotDyeing(u)
+	if err != nil {
+		return Response{Code: -1, Msg: err.Error()}
+	}
+	return Response{Code: 0, Msg: "ok", Data: data}
+}
+
+// GardeFlowerpotFertilizer  施肥
+func GardeFlowerpotFertilizer(c *gin.Context) interface{} {
+	var u = global.GardenPotParams{}
+	err := c.ShouldBind(&u)
+	if err != nil {
+		return Response{Code: -1, Msg: err.Error()}
+	}
+	data, err := service.GardeFlowerpotFertilizer(u)
+	if err != nil {
+		return Response{Code: -1, Msg: err.Error()}
+	}
+	return Response{Code: 0, Msg: "ok", Data: data}
+}
+
+// HarvestFlower  收获
+func HarvestFlower(c *gin.Context) interface{} {
+	var u = global.GardenPotParams{}
+	err := c.ShouldBind(&u)
+	if err != nil {
+		return Response{Code: -1, Msg: err.Error()}
+	}
+	data, err := service.HarvestFlower(u)
+	if err != nil {
+		return Response{Code: -1, Msg: err.Error()}
+	}
+	return Response{Code: 0, Msg: "收获成功", Data: data}
+}
+
+// --------gb获取历史记录
+
+// ListGardenGbDetail // list by page condition
+func ListGardenGbDetail(c *gin.Context) interface{} {
+	var u = db.GardenGbDetail{PageSize: 10, PageNo: 1}
+	err := c.ShouldBind(&u)
+	if err != nil {
+		return Response{Code: -1, Msg: err.Error()}
+	}
+	data, err := service.ListGardenGbDetail(&u)
+	if err != nil {
+		return Response{Code: -1, Msg: err.Error()}
+	}
+	return Response{Code: 0, Msg: "ok", Data: data}
+}
+
+// BuyShopSeed // 购买种子
+func BuyShopSeed(c *gin.Context) interface{} {
+	var u = global.GardenPotParams{}
+	err := c.ShouldBind(&u)
+	if err != nil {
+		return Response{Code: -1, Msg: err.Error()}
+	}
+	data, err := service.BuyShopSeed(&u)
+	if err != nil {
+		return Response{Code: -1, Msg: err.Error()}
+	}
+	return Response{Code: 0, Msg: "ok", Data: data}
+}
+
+// BuyShopProp // 购买道具
+func BuyShopProp(c *gin.Context) interface{} {
+	var u = global.GardenPotParams{}
+	err := c.ShouldBind(&u)
+	if err != nil {
+		return Response{Code: -1, Msg: err.Error()}
+	}
+	data, err := service.BuyShopProp(&u)
+	if err != nil {
+		return Response{Code: -1, Msg: err.Error()}
+	}
+	return Response{Code: 0, Msg: "ok", Data: data}
+}
+
+// ListGardenMagician // 魔法屋内部可合成列表
+func ListGardenMagician(c *gin.Context) interface{} {
+	var u = db.GardenSeeds{PageNo: 1}
+	err := c.ShouldBind(&u)
+	if err != nil {
+		return Response{Code: -1, Msg: err.Error()}
+	}
+	data, err := service.ListGardenMagician(&u)
+	if err != nil {
+		return Response{Code: -1, Msg: err.Error()}
+	}
+	return Response{Code: 0, Msg: "ok", Data: data}
+}
+
+// GardenMagicianDetail // 魔法屋查询一个种子合成所需材料
+func GardenMagicianDetail(c *gin.Context) interface{} {
+	var u = global.MagicianParams{}
+	err := c.ShouldBind(&u)
+	if err != nil {
+		return Response{Code: -1, Msg: err.Error()}
+	}
+	data, err := service.GardenMagicianDetail(&u)
+	if err != nil {
+		return Response{Code: -1, Msg: err.Error()}
+	}
+	return Response{Code: 0, Msg: "ok", Data: data}
+}
+
+// GardenMagicianSynthesis // 魔法屋合成
+func GardenMagicianSynthesis(c *gin.Context) interface{} {
+	var u = global.MagicianParams{}
+	err := c.ShouldBind(&u)
+	if err != nil {
+		return Response{Code: -1, Msg: err.Error()}
+	}
+	data, err := service.GardenMagicianSynthesis(&u)
+	if err != nil {
+		return Response{Code: -1, Msg: err.Error()}
+	}
+	return Response{Code: 0, Msg: "ok", Data: data}
+}
+
+// GardenHouseList // 花房花朵分页查询
+func GardenHouseList(c *gin.Context) interface{} {
+	var u = global.MagicianParams{Page: 1}
+	err := c.ShouldBind(&u)
+	if err != nil {
+		return Response{Code: -1, Msg: err.Error()}
+	}
+	data, err := service.GardenHouseList(&u)
+	if err != nil {
+		return Response{Code: -1, Msg: err.Error()}
+	}
+	return Response{Code: 0, Msg: "ok", Data: data}
+}
+
+// GardenHouseStatistics // 花房花朵分页查询 统计
+func GardenHouseStatistics(c *gin.Context) interface{} {
+	var u = global.MagicianParams{}
+	err := c.ShouldBind(&u)
+	if err != nil {
+		return Response{Code: -1, Msg: err.Error()}
+	}
+	data, err := service.GardenHouseStatistics(&u)
 	if err != nil {
 		return Response{Code: -1, Msg: err.Error()}
 	}

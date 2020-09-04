@@ -3,6 +3,7 @@ module magic
 go 1.13
 
 require (
+	fyne.io/fyne v1.3.3 // indirect
 	github.com/afocus/captcha v0.0.0-20191010092841-4bd1f21c8868
 	github.com/astaxie/beego v1.12.2
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
@@ -15,5 +16,6 @@ require (
 	github.com/qiniu/api.v7/v7 v7.5.0
 	github.com/rakyll/statik v0.1.7
 	github.com/robfig/cron v1.2.0
+	github.com/satori/go.uuid v1.2.0
 	golang.org/x/image v0.0.0-20200618115811-c13761719519 // indirect
 )

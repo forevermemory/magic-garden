@@ -31,7 +31,6 @@ func InitRouterV1(r *gin.Engine, prefix string) *gin.Engine {
 			"message": "ok",
 		})
 	})
-	r.POST("/pay_order/pay/onlinePay", handle)
 	// 生成验证码图片
 	r.GET("/captcha", controller.GenerateCaptcha)
 
@@ -45,7 +44,7 @@ func InitRouterV1(r *gin.Engine, prefix string) *gin.Engine {
 		user.POST("/update", route(controller.UpdateUsers))
 		user.POST("/reset/password", route(controller.UpdateUsersPassword))
 		user.GET("/user/get", route(controller.GetUsersByID))
-		// 好友系统
+		// 好友系统 TODO
 		user.POST("/friends/add", route(controller.UpdateUsersPassword))
 		user.POST("/friends/delete", route(controller.UpdateUsersPassword))
 		user.POST("/friends/list", route(controller.UpdateUsersPassword))

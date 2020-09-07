@@ -160,6 +160,18 @@ func AddGarden(o *Garden, tx ...*gorm.DB) error {
 	return db.Create(o).Error
 }
 
+// UpdateGardenOnlyNameandInfo 修改仅修改两个字段
+func UpdateGardenOnlyNameandInfo(o *Garden, tx ...*gorm.DB) (*Garden, error) {
+	db := global.MYSQL
+	if tx != nil {
+		db = tx[0]
+	}
+	sql := "update garden set g_name = ?,g_info = ? where _id = ?"
+	err := db.Exec(sql, o.GName, o.GInfo, o.ID).First(o).Error
+	// err := db.Table("garden").Where("_id=?", o.ID).Update(o).First(o).Error
+	return o, err
+}
+
 // UpdateGarden 修改
 func UpdateGarden(o *Garden, tx ...*gorm.DB) (*Garden, error) {
 	db := global.MYSQL

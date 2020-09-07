@@ -38,7 +38,7 @@ func InitGarden(req *global.UserAddGamesParams) error {
 			GLevel:     1,
 			GAtlas:     0,
 			IsSignin:   0,
-			SignDays:   0,
+			SignDays:   1,
 			GCurrentEx: 0,
 		}
 		if err = tx.Create(garden).Error; err != nil {
@@ -72,7 +72,7 @@ func InitGarden(req *global.UserAddGamesParams) error {
 		//
 		tx.Commit()
 	} else {
-		return nil
+		return err
 	}
 
 	return nil
@@ -91,9 +91,10 @@ func ListGardenKnapsack(b *db.GardenFlowerKnapsack) (*db.DataStore, error) {
 	return &db.DataStore{Total: total, Data: list, TotalPage: (int(total) + global.PageSize - 1) / global.PageSize}, nil
 }
 
-// UpdateGarden update 修复了会更新其它字段的bug 只会更新名称和公告
+// UpdateGarden update 修复了会更新其它字段的bug 只会更新名称和公告 ok
 func UpdateGarden(b *db.Garden) (*db.Garden, error) {
-	return db.UpdateGarden(b)
+
+	return db.UpdateGardenOnlyNameandInfo(b)
 }
 
 // GetGardenByID get by id

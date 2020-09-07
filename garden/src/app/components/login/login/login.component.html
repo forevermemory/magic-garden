@@ -1,0 +1,34 @@
+<div class="login-login">
+    <img src="assets/3gqq_logo.png" width="130" height="40" alt="logo" /><br />
+    <div class="bar">【3GQQ家园登录】<br /></div>
+    <div class="form">
+        <input type="hidden" name="act" value="ok" />
+        <input type="hidden" name="srcurl" value="/home/my_home.html" />
+        3G家园账号（非QQ账号）:<br />
+        <input type="text" name="name" emptyok="true" maxlength="50" value="" [(ngModel)]="userInfo.username" /><br />
+        3G家园密码:<br />
+        <input type="password" name="pass" emptyok="true" value="" maxlength="50"
+            [(ngModel)]="userInfo.password" /><br />
+
+        <input type="button" value="确定登录" (click)="handleLogin()" />
+        <br />
+        {{ userInfo | json }}
+    </div>
+    <div class="other">
+        <a href="/login/regist.html">免费注册</a>|<a href="/login/find.html">找回资料</a><br />
+        <a href="/login/terms.html">注册声明</a>|<a href="/login/index.html">客服中心</a><br />
+        <a href="/home/my_home.html">返回刚才页面</a><br />
+        ----------<br />
+    </div>
+
+    <div class="footer">
+        <p>
+            <a href="/">3GQQ家园社区</a>-<a href="/bbs/index.html">社区广场</a>-<a href="/column/114.html">导航</a>-<a
+                href="/login/login.html?srcurl=/home/my_home.html">登录</a><br />
+        </p>
+        <p>小Q报时：2020-09-07 09:53:32<br /></p>
+    </div>
+    <div class="test">
+        <p-breadcrumb [model]="items__" (onItemClick)="handleOnItemClick($event)"></p-breadcrumb>
+    </div>
+</div>

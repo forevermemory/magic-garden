@@ -1,1 +1,65 @@
-<p>register works!</p>
+<div class="login-register">
+    <div class="logo">
+        <img src="assets/3gqq_logo.png" width="130" height="40" alt="logo" />
+    </div>
+    <div class="p-fluid-l">
+
+
+        <!-- my -->
+        <div class="cell">
+            <div class="left">
+                昵称:
+            </div>
+            <div class="right">
+                <input type="text" pInputText placeholder="" [(ngModel)]="userinfo.nickname" />
+            </div>
+        </div>
+        <div class="cell">
+            <div class="left">
+                性别:
+            </div>
+            <div class="right">
+                <select name="" id="">
+                    <option [value]="s" *ngFor="let s of userinfo.sexList">{{s}}</option>
+                </select>
+            </div>
+        </div>
+        <div class="cell">
+            <div class="left">
+                密码:
+            </div>
+            <div class="right">
+                <input type="password" pPassword placeholder="" [(ngModel)]="userinfo.password" promptLabel="请输入密码"
+                    weakLabel="弱" mediumLabel="中" strongLabel="强" />
+            </div>
+        </div>
+        <div class="cell">
+            <div class="left">
+                手机号:
+            </div>
+            <div class="right">
+                <input type="text" pInputText placeholder="" [(ngModel)]="userinfo.username" />
+            </div>
+        </div>
+        <div class="cell">
+            <div class="left">
+                短信验证:
+            </div>
+            <div class="right">
+                <span class="p-input-icon-right">
+                    <i class="getSendmsg" (click)="handleGetSmsCode()">获取短信验证码</i>
+                    <input type="text" pInputText placeholder="" [(ngModel)]="userinfo.code" />
+                </span>
+            </div>
+        </div>
+
+        <div class="button">
+            <button pButton type="button" label="我要注册" (click)="handleRegister()"></button>
+        </div>
+        <!-- my -end -->
+    </div>
+    <p-toast></p-toast>
+    <div class="test">
+        {{ userinfo | json }}
+    </div>
+</div>

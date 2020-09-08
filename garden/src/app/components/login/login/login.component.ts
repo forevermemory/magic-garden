@@ -23,6 +23,7 @@ export class LoginComponent implements OnInit {
             { label: 'planC' },
         ];
     }
+    // 登陆
     public async handleLogin() {
         let res = await this.http.get(
             GlobalVariable.base_path +

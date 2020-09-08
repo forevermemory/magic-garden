@@ -9,7 +9,15 @@ import { AppComponent } from './app.component';
 import { HttprequestService } from './services/http-request.service';
 
 // 组件库
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
 import { BreadcrumbModule } from 'primeng/breadcrumb';
+import { InputTextModule } from 'primeng/inputtext';
+import { PasswordModule } from 'primeng/password';
+import { DropdownModule } from 'primeng/dropdown';
+import { ToastModule } from 'primeng/toast';
+import { ButtonModule } from 'primeng/button';
+
 // import { AccordionModule } from 'primeng/accordion'; //accordion and accordion tab
 
 // 自定义组件
@@ -34,7 +42,13 @@ import { HttpClientModule } from '@angular/common/http';
         FormsModule,
         // 组件库
         // AccordionModule,
+        BrowserAnimationsModule,
         BreadcrumbModule,
+        InputTextModule,
+        PasswordModule,
+        DropdownModule,
+        ToastModule,
+        ButtonModule,
     ],
     providers: [HttprequestService],
     bootstrap: [AppComponent],

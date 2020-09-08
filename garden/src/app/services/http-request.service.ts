@@ -8,9 +8,9 @@ import { Router } from '@angular/router';
 export class HttprequestService {
     constructor(private http: HttpClient, private router: Router) {}
     // get请求
-    async get(url) {
+    get(url, options = {}) {
         return new Promise((resolve, reject) => {
-            this.http.get(url).subscribe((response) => {
+            this.http.get(url, options).subscribe((response) => {
                 // handle success
                 resolve(response);
             });
@@ -18,12 +18,12 @@ export class HttprequestService {
     }
 
     // post请求
-    async post(url, data) {
+    post(url, data = {}, options = {}) {
         const httpOptions = {
             headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
         };
         return new Promise((resolve, reject) => {
-            this.http.post(url, data).subscribe((response) => {
+            this.http.post(url, data, options).subscribe((response) => {
                 resolve(response);
             });
         });

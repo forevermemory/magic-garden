@@ -57,6 +57,12 @@ export class RegisterComponent implements OnInit {
      */
     public handleRegister() {}
 
+    /**
+     * handleAddCaptcha
+     * 添加验证码到注册表单中
+     */
+    public handleAddCaptcha() {}
+
     // TODO
-    // i want to monitor isNeedCaptcha ,when isNeedCaptcha >3 trigger captcha
+    // 我想监听 isNeedCaptcha (这个值会有多哥事件改变它的值),如果它一旦大于3,就去触发验证码
 }

@@ -2,6 +2,7 @@
 node_modules
 /dist
 /garden/node_modules/
+/hello-world/node_modules/
 /magic/auto.py
 /front/node_modules
 package-lock.json

@@ -25,7 +25,7 @@ func Cors() gin.HandlerFunc {
 		}
 
 		if origin != "" {
-			fmt.Println("origin: ", origin)
+			// fmt.Println("origin: ", origin)
 			//c.Writer.Header().Set("Access-Control-Allow-Origin", origin)
 			c.Header("Access-Control-Allow-Origin", origin) // 这是允许访问所有域
 

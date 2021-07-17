@@ -12,6 +12,8 @@ type Games struct {
 
 	GName  string `json:"g_name" form:"g_name" gorm:"column:g_name;comment:'游戏名称'"`
 	GState int    `json:"g_state" form:"g_state" gorm:"column:g_state;comment:'是否上线'"`
+	GURL   string `json:"g_url" form:"g_url" gorm:"column:g_url;comment:'路由'"`
+	GDesc  string `json:"g_desc" form:"g_desc" gorm:"column:g_desc;comment:'描述'"`
 
 	PageNo   int `json:"page" form:"page" gorm:"-"`
 	PageSize int `json:"page_size" form:"page_size" gorm:" - "`

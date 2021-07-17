@@ -39,6 +39,7 @@
             </div>
             <div class="right">
                 <input type="text" pInputText placeholder="" [(ngModel)]="userinfo.username" />
+                <input type="hidden" [(ngModel)]="isNeedCaptcha" (change)="changedExtraHandler($event)" />
             </div>
         </div>
         <div class="cell">
@@ -61,5 +62,7 @@
     <p-toast></p-toast>
     <div class="test">
         {{ userinfo | json }}
+        <br>
+        {{isNeedCaptcha}}
     </div>
 </div>

@@ -23,7 +23,7 @@ func UserLogin(c *gin.Context) {
 	var u = global.RegisteruserParams{}
 	err := c.ShouldBind(&u)
 
-	user, err := service.UserLogin(&u, c.Request.Header.Get("User-Agent"))
+	user, err := service.UserLogin(&u)
 	if err != nil {
 		c.JSON(200, gin.H{
 			"code": -1,
@@ -184,8 +184,8 @@ func generateToken(c *gin.Context, user *db.Users) {
 		IsVip:    user.IsVip,
 		StandardClaims: jwtgo.StandardClaims{
 			//NotBefore: int64(time.Now().Unix() + 10),   // 签名生效时间
-			ExpiresAt: time.Now().Unix() + 86400, // 过期时间 1天
-			Issuer:    "magic-garden",            //签名的发行者
+			ExpiresAt: time.Now().Unix() + int64(COOKIE_MAX_AGE), // 过期时间 1天
+			Issuer:    "magic-garden",                            //签名的发行者
 		},
 	}
 	// 生成token
@@ -197,14 +197,14 @@ func generateToken(c *gin.Context, user *db.Users) {
 		})
 		return
 	}
-	// 存入redis
-	if err := setToken(token, user.ID+"__"+user.Phone); err != nil {
-		c.JSON(http.StatusOK, ErrorResponse{
-			Errcode: -1,
-			Message: err.Error(),
-		})
-		return
-	}
+	// // 存入redis
+	// if err := setToken(token, user.ID+"__"+user.Phone); err != nil {
+	// 	c.JSON(http.StatusOK, ErrorResponse{
+	// 		Errcode: -1,
+	// 		Message: err.Error(),
+	// 	})
+	// 	return
+	// }
 	// 设置cookie
 	//c.SetCookie("token", token, 604800, "/", "", false, false)
 	http.SetCookie(c.Writer, &http.Cookie{
@@ -213,29 +213,30 @@ func generateToken(c *gin.Context, user *db.Users) {
 		Path:   "/",
 		Domain: "",
 		//Expires:time.Now().Add(time.Minute*10),
-		MaxAge:   86400,
+		MaxAge:   COOKIE_MAX_AGE,
 		HttpOnly: false,
 		SameSite: http.SameSiteLaxMode,
 		Secure:   false,
 	})
 	// 返回结果
-	result := map[string]interface{}{
-		"_id":      user.ID,
-		"username": user.Username,
-		"phone":    user.Phone,
-		"nickname": user.Nickname,
-		"is_vip":   user.IsVip,
-	}
+	// result := map[string]interface{}{
+	// 	"_id":      user.ID,
+	// 	"username": user.Username,
+	// 	"phone":    user.Phone,
+	// 	"nickname": user.Nickname,
+	// 	"is_vip":   user.IsVip,
+	// 	"USER":     user,
+	// }
 	c.JSON(http.StatusOK, OKResponse{
 		Errcode: 0,
-		Data:    result,
+		Data:    user,
 	})
 	return
 }
 
-func setToken(token string, key string) error {
-	conn := global.REDIS.Get()
-	defer conn.Close()
-	_, err := conn.Do("set", key, token)
-	return err
-}
+// func setToken(token string, key string) error {
+// 	conn := global.REDIS.Get()
+// 	defer conn.Close()
+// 	_, err := conn.Do("set", key, token)
+// 	return err
+// }

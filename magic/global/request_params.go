@@ -4,9 +4,11 @@ package global
 type RegisteruserParams struct {
 	ID          string `json:"user_id"`
 	Username    string `json:"username"`
+	Nickname    string `json:"nickname"`
 	Password    string `json:"password"`
 	NewPassword string `json:"new_password"`
 	Phone       string `json:"phone"`
+	Email       string `json:"email"`
 	Code        string `json:"code"`
 	// Captcha 触发验证码后需要判断
 	Captcha   string `json:"captcha"`
@@ -19,6 +21,10 @@ type UserAddGamesParams struct {
 	GameID int    `json:"game_id" form:"game_id"`
 	Ginfo  string `json:"g_info" form:"g_info"`
 	Gname  string `json:"g_name" form:"g_name"`
+
+	OrderIndex int `json:"order_index" form:"order_index"`
+	// user_game_id
+	UserGameID int `json:"user_game_id" form:"user_game_id"`
 }
 
 // GardenParams 花园参数

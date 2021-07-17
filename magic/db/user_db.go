@@ -2,6 +2,7 @@ package db
 
 import (
 	"magic/global"
+	"magic/utils"
 
 	"github.com/jinzhu/gorm"
 )
@@ -34,14 +35,21 @@ type Users struct {
 	Nickname       string `json:"nickname" form:"nickname" gorm:"column:nickname;comment:'昵称'"`
 	Password       string `json:"password" form:"password" gorm:"column:password;comment:'密码'"`
 	Phone          string `json:"phone" form:"phone" gorm:"column:phone;comment:'手机'"`
+	Email          string `json:"email" form:"email" gorm:"column:email;comment:'手机'"`
 	Status         int    `json:"status" form:"status" gorm:"column:status;comment:'状态'"`
 	IsVip          int    `json:"is_vip" form:"is_vip" gorm:"column:is_vip;comment:'是否是会员'"`
 	Desc           string `json:"desc" form:"desc" gorm:"column:desc;comment:'desc'"`
+	CreateTime     string `json:"create_time" form:"create_time" gorm:"column:create_time;comment:'desc'"`
 	GBMoney        int    `json:"gb_money" form:"gb_money" gorm:"column:gb_money;comment:'FGB'"`
 	Yuanbao        string `json:"yuanbao" form:"yuanbao" gorm:"column:yuanbao;comment:'重置的元宝数量'"`
 	ChangePassTime string `json:"change_pass_time" form:"change_pass_time" gorm:"column:change_pass_time;comment:'desc'"`
-	PageNo         int    `json:"-" form:"page" gorm:"-"`
-	PageSize       int    `json:"-" form:"page_size" gorm:" - "`
+	UpdateTime     string `json:"update_time" form:"update_time" gorm:"column:update_time;comment:'desc'"`
+	Level          int    `json:"level" form:"level" gorm:"column:level;comment:'desc'"`
+
+	LevelObject *UserLevel `json:"LevelObject" form:"LevelObject" gorm:"-'"`
+
+	PageNo   int `json:"-" form:"page" gorm:"-"`
+	PageSize int `json:"-" form:"page_size" gorm:" - "`
 }
 
 // TableName 表名
@@ -89,6 +97,8 @@ func AddUsers(o *Users, tx ...*gorm.DB) error {
 	if tx != nil {
 		db = tx[0]
 	}
+	o.CreateTime = utils.GetNowTimeString()
+	o.UpdateTime = utils.GetNowTimeString()
 	return db.Create(o).Error
 }
 
@@ -98,6 +108,7 @@ func UpdateUsers(o *Users, tx ...*gorm.DB) (*Users, error) {
 	if tx != nil {
 		db = tx[0]
 	}
+	o.UpdateTime = utils.GetNowTimeString()
 	err := db.Table("users").Where("_id=?", o.ID).Update(o).Error
 	return o, err
 }

@@ -25,7 +25,9 @@ import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { RegisterComponent } from './components/login/register/register.component';
 import { LoginComponent } from './components/login/login/login.component';
+import { IndexComponent } from './components/index/index.component';
 import { HttpClientModule } from '@angular/common/http';
+import { MyHomeComponent } from './components/home/my-home/my-home.component';
 
 @NgModule({
     declarations: [
@@ -34,6 +36,8 @@ import { HttpClientModule } from '@angular/common/http';
         FooterComponent,
         RegisterComponent,
         LoginComponent,
+        IndexComponent,
+        MyHomeComponent,
     ],
     imports: [
         BrowserModule,

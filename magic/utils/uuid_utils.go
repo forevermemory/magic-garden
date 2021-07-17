@@ -8,7 +8,7 @@ import (
 
 // GetUUID get uuid
 func GetUUID() string {
-	return strings.Replace("-", uuid.NewV4().String(), "", -1)
+	return strings.Replace(uuid.NewV4().String(), "-", "", -1)
 	// return uuid.NewV4().String()
 }
 

@@ -15,3 +15,5 @@ type OKResponse struct {
 	Errcode int         `json:"code"`
 	Data    interface{} `json:"data"`
 }
+
+const COOKIE_MAX_AGE int = 86400 * 30

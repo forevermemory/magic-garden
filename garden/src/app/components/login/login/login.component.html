@@ -1,18 +1,18 @@
 <div class="login-login">
     <img src="assets/3gqq_logo.png" width="130" height="40" alt="logo" /><br />
-    <div class="bar">【3GQQ家园登录】<br /></div>
+    <div class="bar">【家园登录】<br /></div>
     <div class="form">
         <input type="hidden" name="act" value="ok" />
         <input type="hidden" name="srcurl" value="/home/my_home.html" />
-        3G家园账号（非QQ账号）:<br />
-        <input type="text" name="name" emptyok="true" maxlength="50" value="" [(ngModel)]="userInfo.username" /><br />
-        3G家园密码:<br />
+        账号(手机号）:<br />
+        <input type="text" name="name" emptyok="true" maxlength="50" value="" [(ngModel)]="userinfo.username" /><br />
+        密码:<br />
         <input type="password" name="pass" emptyok="true" value="" maxlength="50"
-            [(ngModel)]="userInfo.password" /><br />
+            [(ngModel)]="userinfo.password" /><br />
 
         <input type="button" value="确定登录" (click)="handleLogin()" />
         <br />
-        {{ userInfo | json }}
+        {{ userinfo | json }}
     </div>
     <div class="other">
         <a href="/login/regist.html">免费注册</a>|<a href="/login/find.html">找回资料</a><br />

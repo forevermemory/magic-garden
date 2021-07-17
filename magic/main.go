@@ -18,4 +18,5 @@ func main() {
 
 	fmt.Println("Listening and serving HTTP on :", global.Port)
 	r.Run(":" + global.Port)
+	// cron.TestCronisaster()
 }

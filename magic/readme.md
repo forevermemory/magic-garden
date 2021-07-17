@@ -958,3 +958,9 @@
 ### 好友系统
 
 #### 新增好友
+
+docker network create link-network
+docker run -d --network link-network --network-alias redis redis:latest
+docker run -d --network link-network --network-alias mysql mysql:latest
+
+docker run -it --network link-network magic:v1 /bin/bash

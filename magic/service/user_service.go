@@ -17,57 +17,74 @@ import (
 )
 
 // UserLogin 用户登录
-func UserLogin(req *global.RegisteruserParams, ua string) (*db.Users, error) {
-	conn := global.REDIS.Get()
-	defer conn.Close()
+func UserLogin(req *global.RegisteruserParams) (*db.Users, error) {
+
 	// 1.1 是否出发了图片验证码
-	if req.IsCaptcha == 1 {
-		capt, err := redis.String(conn.Do("get", ua))
-		if err != nil {
-			return nil, errors.New("验证码过期")
-		}
-		if capt != req.Captcha {
-			return nil, errors.New("验证码不正确")
-		}
-	}
+	// if req.IsCaptcha == 1 {
+	// 	conn := global.REDIS.Get()
+	// 	defer conn.Close()
+	// 	capt, err := redis.String(conn.Do("get", ua))
+	// 	if err != nil {
+	// 		return nil, errors.New("验证码过期")
+	// 	}
+	// 	if capt != req.Captcha {
+	// 		return nil, errors.New("验证码不正确")
+	// 	}
+	// }
 
 	// 2. 登陆用户
 	user, err := db.GetUsersByUsernameAndPassword(req.Username, req.Password)
 	if err != nil {
 		return nil, errors.New("用户名不存在,或者密码错误,请重试")
 	}
+	user.Password = "******"
+
+	// 3. 查询相关信息
+	// 查询等级
+	ll, err := db.GetUserLevelByLevel(user.Level)
+	if err != nil {
+		// return nil, err
+	}
+	user.LevelObject = ll
 
 	return user, nil
 }
 
 // RegisterUser 注册用户
 func RegisterUser(req *global.RegisteruserParams, ua string) error {
-	conn := global.REDIS.Get()
-	defer conn.Close()
-	// 1.1 是否出发了验证码
-	if req.IsCaptcha == 1 {
-		capt, err := redis.String(conn.Do("get", ua))
-		if err != nil {
-			return errors.New("验证码过期")
-		}
-		if capt != req.Captcha {
-			return errors.New("验证码不正确")
-		}
-	}
-	// 1.2校验手机验证码是否正确
-	code, err := redis.String(conn.Do("get", req.Phone))
-	if err != nil {
-		return err
-	}
-	if code != req.Code {
-		return errors.New("手机验证码不正确")
-	}
+	// conn := global.REDIS.Get()
+	// defer conn.Close()
+	// // 1.1 是否出发了验证码
+	// if req.IsCaptcha == 1 {
+	// 	capt, err := redis.String(conn.Do("get", ua))
+	// 	if err != nil {
+	// 		return errors.New("验证码过期")
+	// 	}
+	// 	if capt != req.Captcha {
+	// 		return errors.New("验证码不正确")
+	// 	}
+	// }
+	// // 1.2校验手机验证码是否正确
+	// code, err := redis.String(conn.Do("get", req.Username))
+	// if err != nil {
+	// 	fmt.Println("redis::err", err)
+	// 	return err
+	// }
+	// if code != req.Code {
+	// 	return errors.New("手机验证码不正确")
+	// }
 	// 2. 注册用户
+	uuidd := utils.GetUUID()
+	var err error
 	user := &db.Users{
-		ID:       utils.GetUUID(),
+		ID:       uuidd,
 		Username: req.Username,
+		Nickname: req.Nickname,
 		Password: req.Password,
-		Phone:    req.Phone,
+		Phone:    req.Username,
+		GBMoney:  1000,
+		Yuanbao:  "10",
+		IsVip:    1,
 	}
 	if err = db.AddUsers(user); err != nil {
 		return err

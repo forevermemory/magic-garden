@@ -46,9 +46,22 @@ a:visited{
     color:#004299;
 }
 a:visited.router-link-active{
-  color: red
+  color: #001111;
 }
-
+.mycursor{
+    color: blue;
+    font-size: 16px;
+    cursor: pointer;
+}
+.module-title {
+    margin: 8px 0 0;
+    padding: 0 5px;
+    height: 20px;
+    line-height: 20px;
+    border-bottom: 4px solid #9FC6EC;
+    color: #000;
+    font-weight: bold;
+}
 
 /* a:visited {color:#800080;} */
 em{color:#9B9B9B;font-size:12px;}

@@ -37,6 +37,36 @@ export  function login(data){
 
 
 //////////////////////////////////////
+
+// 根据path查询游戏
+export  function getGameByfullPath(params){
+    return new Promise((resolve, reject) => {
+        request({
+            url:  api +prefix+ '/games/list',
+            method: 'get',
+            params
+        }).then((res) => {
+            resolve(res)
+        }).catch((err) => {
+            reject(err)
+        })
+    })
+} 
+
+// 根据id查询游戏
+export  function getGameByID(params){
+    return new Promise((resolve, reject) => {
+        request({
+            url:  api +prefix+ '/games/list/'+params.id,
+            method: 'get',
+            // params
+        }).then((res) => {
+            resolve(res)
+        }).catch((err) => {
+            reject(err)
+        })
+    })
+} 
 // 游戏列表
 export  function listGames(data){
     return new Promise((resolve, reject) => {

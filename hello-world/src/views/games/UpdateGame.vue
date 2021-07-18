@@ -10,10 +10,14 @@
         
             <div class="row" v-for="(game,index) in games" :key="game._id" >
                 {{++index}}.
-                <span >{{game.g_name}}</span> 
-                [<span class="cursor" @click="deleteGame(game.game_id)">x</span>] 
-                <span class="cursor"  @click="orderGameUp(index,game.order_index,game.user_game_id)">↑</span> 
-                <span class="cursor"  @click="orderGameDown(index,game.order_index,game.user_game_id)">↓</span>
+                <!-- <router-link :to="game.g_url"> -->
+                <!-- <router-link :to="{ path: game.g_url, query: { game_id: game._id }}"> -->
+                <router-link :to="{ path: '/game', query: { game_id: game._id ,g_url:game.g_url}}">
+                    {{game.g_name}}
+                </router-link>
+                [<span class="mycursor" @click="deleteGame(game.game_id)">x</span>] 
+                <span class="mycursor"  @click="orderGameUp(index,game.order_index,game.user_game_id)">↑</span> 
+                <span class="mycursor"  @click="orderGameDown(index,game.order_index,game.user_game_id)">↓</span>
                 <br/>
             </div>
             
@@ -68,7 +72,6 @@ export default {
             }
             let res = await  userDeleteGames(data)
             if(res.code==0){
-                console.log("删除成功")
                 this.getUserGamesList()
             }
         },
@@ -111,10 +114,6 @@ export default {
 <style >
 /* // <style lang="scss"> */
 
-.cursor{
-    color: blue;
-    font-size: 16px;
-    cursor: pointer;
-}
+
 
 </style>

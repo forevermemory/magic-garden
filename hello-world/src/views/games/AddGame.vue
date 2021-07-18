@@ -42,7 +42,7 @@ export default {
         this.getGamesList()
     },
     destroyed(){
-        console.log("destory")
+        // console.log("destory")
     },
     methods: {
         async addGameEvent(gameID){

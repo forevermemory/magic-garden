@@ -7,6 +7,7 @@ date:2020-07-30 20:20:24
 import (
 	"magic/db"
 	"magic/service"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -46,6 +47,12 @@ func GetGamesByID(c *gin.Context) interface{} {
 	if err != nil {
 		return Response{Code: -1, Msg: err.Error()}
 	}
+	_gid := c.Param("oid")
+	gid, err := strconv.Atoi(_gid)
+	if err != nil {
+		return Response{Code: -1, Msg: err.Error()}
+	}
+	u.ID = gid
 	data, err := service.GetGamesByID(u.ID)
 	if err != nil {
 		return Response{Code: -1, Msg: err.Error()}

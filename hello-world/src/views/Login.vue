@@ -45,10 +45,11 @@ export default {
     mounted(){
         // VueEvent.$emit('toHeader',"【家园登陆】")
         // 从vuex缓存取数据
-        if(this.$store.state.UserInfo){
+        let userinfo = this.$userinfo.get()
+        if(userinfo){
             // 从注册进来的
-            this.formValue.username = this.$store.state.UserInfo.username
-            this.formValue.password = this.$store.state.UserInfo.password
+            this.formValue.username = userinfo.username
+            // this.formValue.password = userinfo.password
         }
     },
     methods: {

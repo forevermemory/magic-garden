@@ -2,13 +2,13 @@
 
 <template>
   <div class="index">
-        <router-link :to="{name: 'Index'}">
+        <router-link :to="{name: 'Userinfo'}">
             <img src="~@/assets/images/site/id.gif" alt="."/>{{this.username}}
         </router-link>
         <router-link :to="{name: 'Index'}">
             <img src="~@/assets/images/site/home.gif" alt="."/>家园
         </router-link>
-        <router-link :to="{name: 'Index'}">
+        <router-link :to="{name: 'QQkongjian'}">
             <img src="~@/assets/images/site/blog.gif" alt="."/>空间
         </router-link>
         <br/>

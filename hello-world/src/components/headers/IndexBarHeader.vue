@@ -2,24 +2,29 @@
 
 <template>
   <div class="index">
-        <IndexBaseHeader/>
         <!-- <br/> -->
         <!-- <div class="note">
         <img src="/image/site/001.gif" alt="."/><a href="/ad/ad/1.html">[幻想西游]古典神话网游！</a><br/>
         </div> -->
 
-        <IndexBarHeader/>
+    <div class="bar">
+         
+        <router-link :to="{name: 'Index'}"> 家园 </router-link>
+        <router-link :to="{name: 'IndexFriends'}"> 好友 </router-link>
+        <router-link :to="{name: 'IndexFamily'}"> 家族 </router-link>
+        <router-link :to="{name: 'IndexSquare'}"> 广场 </router-link>
+        <router-link :to="{name: 'IndexGames'}"> 游戏 </router-link>
+        <br/>
+    </div>
   </div>
 </template>
 
 <script>
 
-import IndexBaseHeader from '@/components/headers/IndexBaseHeader.vue'
-import IndexBarHeader from '@/components/headers/IndexBarHeader.vue'
 
 
 export default {
-    name: 'IndexHeader',
+    name: 'IndexBarHeader',
     props: {
         // username:String,
     },
@@ -31,26 +36,10 @@ export default {
         }
     },
     components: {
-        IndexBaseHeader,
-        IndexBarHeader,
-        // Header
     },
     created(){
     },
     mounted(){
-        // VueEvent.$emit('toHeader',"【家园首页】")
-        // 从vuex缓存取数据
-        // if(this.$store.state.UserInfo){
-        //     // 从注册进来的
-        //     this.formValue.username = this.$store.state.UserInfo.username
-        //     this.formValue.password = this.$store.state.UserInfo.password
-        // }
-
-        if(localStorage.getItem('userinfo')){
-
-            this.userinfo = JSON.parse(localStorage.getItem('userinfo'))
-            this.username = this.userinfo.username
-        }
 
     },
     methods: {

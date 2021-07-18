@@ -8,7 +8,9 @@
         <a href="/home/profile/35798847.html">{{userinfo.username}}</a> 
         {{userinfo.LevelObject.level_name}}
         <img :src='`/static${userinfo.LevelObject.level_img}`' alt="."/>
-        (<a href="/home/level/35798847.html">详情</a>)
+        (
+            <router-link :to="{name: 'Userinfo'}">详情 </router-link>
+        )
         <br/>
 
         <img src="~@/assets/images/site/002.gif" alt="."/>
@@ -32,19 +34,21 @@
         <a href="/bbs/my_family.html">快速回家</a>☆
         
         <div class="module-title">
-            【我的游戏 <a href="/bbs/topic_active.html">活动</a> 
-            <a href="/home/my_topic.html">帖</a> 
-            <a href="/book/user/">书</a>】
+            【我的游戏】 <a href="/bbs/topic_active.html">活动</a> |
+            <a href="/home/my_topic.html">帖</a>  |
+            <a href="/book/user/">书</a>
             <br/>
         </div>
 
         <div class="module-content">
-            正在玩
-            <a href="/home/game_go/4239.html">魔法花园</a><br/>
+            正在玩:
+            <router-link :to="{path:'/game/garden/index'}">魔法花园</router-link>
+            <br/>
 
             <div v-for="game in games" :key="game._id">
                 <img src="~@/assets/images/site/new.gif" alt="."/>
-                <router-link to="">
+                <!-- <router-link :to="game.g_url"> -->
+                <router-link :to="{ path: '/game', query: { game_id: game._id ,g_url:game.g_url}}">
                     {{game.g_name}}
                 </router-link>
                 <br/>
